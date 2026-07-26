@@ -136,6 +136,7 @@ class SyncService {
           'name': payload['customer_name'] ?? 'Unknown',
           'phone': payload['phone_number'] ?? '',
         },
+        'technician_assigned': payload['technician_assigned'],
         'updates': [
           {
             'note': 'Call created.',
@@ -146,6 +147,9 @@ class SyncService {
       };
       
       final docRef = await _firestore.collection('calls').add(data);
+      
+      await _notifyIfRequired(data['priority'] as String?, data['technician_assigned'] as String?, data['problem_description'] as String?);
+      
       final docSnap = await docRef.get();
       return Call.fromJson(docSnap.data() as Map<String, dynamic>, docId: docSnap.id);
     } catch (e) {
@@ -182,6 +186,10 @@ class SyncService {
         transaction.update(docRef, updateData);
       });
       
+      if (payload['technician_assigned'] != null || payload['priority'] == 'High') {
+         await _notifyIfRequired(payload['priority'] ?? 'High', payload['technician_assigned'], payload['note']);
+      }
+      
       final docSnap = await docRef.get();
       return Call.fromJson(docSnap.data() as Map<String, dynamic>, docId: docSnap.id);
     } catch (e) {
@@ -202,20 +210,39 @@ class SyncService {
     // Offline caching is automatically handled by Firestore. No logic needed here!
   }
 
-  Future<Map<String, dynamic>?> extractCallInfo(String text) async {
+  Future<Map<String, dynamic>> extractCallInfo(String rawText) async {
     try {
       final baseUrl = await _settings.getBaseUrl();
-      final res = await http.post(
-        Uri.parse('$baseUrl/api/ai_assist'),
+      final response = await http.post(
+        Uri.parse('$baseUrl/calls/extract'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'text': text}),
+        body: jsonEncode({'raw_text': rawText}),
       );
-      if (res.statusCode == 200) {
-        return jsonDecode(res.body);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
       }
     } catch (e) {
-      print('AI Assist Error: $e');
+      print('Extract info error: $e');
     }
-    return null;
+    return {};
+  }
+
+  Future<void> _notifyIfRequired(String? priority, String? techName, String? problemDesc) async {
+    if (priority == 'High' && techName != null && techName.isNotEmpty) {
+      try {
+        final baseUrl = await _settings.getBaseUrl();
+        await http.post(
+          Uri.parse('$baseUrl/notify'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'technician_assigned': techName,
+            'title': 'New High Priority Call',
+            'body': problemDesc ?? 'Urgent call assigned.',
+          }),
+        );
+      } catch (e) {
+        print('Notify error: $e');
+      }
+    }
   }
 }
