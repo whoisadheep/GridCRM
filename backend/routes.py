@@ -6,6 +6,43 @@ import firebase_admin
 
 api_bp = Blueprint('api', __name__)
 
+@api_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    if not data or 'role' not in data:
+        return jsonify({"error": "Missing credentials"}), 400
+        
+    role = data['role']
+    
+    if role == 'admin':
+        username = data.get('username')
+        password = data.get('password')
+        # Hardcoded admin for demo, ideally use Firebase Auth
+        if username == 'admin' and password == 'admin':
+            return jsonify({"success": True, "role": "admin"}), 200
+        else:
+            return jsonify({"error": "Invalid admin credentials"}), 401
+            
+    elif role == 'technician':
+        name = data.get('name')
+        pin = data.get('pin')
+        
+        if not name or not pin:
+            return jsonify({"error": "Name and PIN required"}), 400
+            
+        if not firebase_admin._apps:
+            return jsonify({"error": "Firebase not initialized"}), 500
+            
+        db = firestore.client()
+        techs = db.collection('technicians').where('name', '==', name).where('pin', '==', pin).get()
+        
+        if techs:
+            return jsonify({"success": True, "role": "technician", "technician_name": name}), 200
+        else:
+            return jsonify({"error": "Invalid technician credentials"}), 401
+            
+    return jsonify({"error": "Invalid role"}), 400
+
 @api_bp.route('/calls/extract', methods=['POST'])
 def extract_call():
     data = request.get_json()
@@ -112,6 +149,10 @@ def assistant_command():
         new_call_ref = db.collection('calls').document()
         call_data = {
             'customer_id': customer_id,
+            'customer': {
+                'name': customer_data.get('name', 'Unknown'),
+                'phone': customer_data.get('phone', '')
+            },
             'call_type': "Service",
             'problem_description': updates.get("problem_description", "No description provided"),
             'priority': updates.get("priority", "Medium"),
