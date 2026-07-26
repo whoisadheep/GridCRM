@@ -5,3 +5,4 @@ python-dotenv==1.0.1
 Flask-Cors==4.0.1
 google-generativeai==0.7.2
 firebase-admin
+gunicorn==21.2.0
