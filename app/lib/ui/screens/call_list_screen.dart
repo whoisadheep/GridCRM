@@ -18,7 +18,7 @@ class CallListScreen extends ConsumerStatefulWidget {
 }
 
 class _CallListScreenState extends ConsumerState<CallListScreen> {
-  final Set<int> _selectedIds = {};
+  final Set<String> _selectedIds = {};
   String _searchQuery = '';
   String _statusFilter = 'Pending';
   String _role = 'admin';
@@ -54,7 +54,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
     }
   }
 
-  void _toggleSelection(int id) {
+  void _toggleSelection(String id) {
     setState(() {
       if (_selectedIds.contains(id)) {
         _selectedIds.remove(id);
@@ -89,15 +89,12 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
       setState(() {
         _selectedIds.clear();
       });
-      
-      ref.read(callsProvider.notifier).loadCalls();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var calls = ref.watch(callsProvider);
-    final hasPending = ref.watch(pendingSyncProvider);
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
     
     // Apply Filters
@@ -130,11 +127,6 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
             onPressed: () => setState(() => _selectedIds.clear()),
           ),
         ] : [
-          if (hasPending)
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.sync_problem, color: Colors.orange),
-            ),
           IconButton(
             icon: const Icon(Icons.auto_awesome, color: Colors.blue),
             onPressed: () {
@@ -236,7 +228,6 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
             child: RefreshIndicator(
               onRefresh: () async {
                 setState(() => _selectedIds.clear());
-                await ref.read(callsProvider.notifier).loadCalls();
               },
               child: calls.isEmpty 
                 ? ListView(
@@ -272,7 +263,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
                     itemCount: calls.length,
                     itemBuilder: (context, index) {
                   final call = calls[index];
-                  final callId = call.id ?? 0;
+                  final callId = call.id ?? '';
                   final isSelected = _selectedIds.contains(callId);
                   
                   return Padding(
@@ -292,7 +283,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
                         }
                       },
                       child: Dismissible(
-                        key: Key(callId.toString()),
+                        key: Key(callId),
                         direction: call.status == 'Resolved' 
                             ? DismissDirection.none 
                             : DismissDirection.horizontal,
@@ -317,7 +308,6 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Marked as Resolved')));
                             }
                           }
-                          ref.read(callsProvider.notifier).loadCalls();
                           return false; // Return false so the item isn't removed from the tree manually
                         },
                         background: Container(

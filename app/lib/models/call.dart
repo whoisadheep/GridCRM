@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'customer.dart';
 import 'call_update.dart';
 
 class Call {
-  final int? id;
-  final int? customerId;
+  final String? id;
+  final String? customerId;
   final String callType;
   final String problemDescription;
   final String priority;
@@ -30,18 +31,24 @@ class Call {
     this.updates,
   });
 
-  factory Call.fromJson(Map<String, dynamic> json) {
+  factory Call.fromJson(Map<String, dynamic> json, {String? docId}) {
+    String? parseDate(dynamic dateStr) {
+      if (dateStr == null) return null;
+      if (dateStr is Timestamp) return dateStr.toDate().toIso8601String();
+      return dateStr.toString();
+    }
+
     return Call(
-      id: json['id'],
-      customerId: json['customer_id'],
+      id: docId ?? json['id']?.toString(),
+      customerId: json['customer_id']?.toString(),
       callType: json['call_type'] ?? 'Other',
       problemDescription: json['problem_description'] ?? '',
       priority: json['priority'] ?? 'Medium',
       technicianAssigned: json['technician_assigned'],
       status: json['status'] ?? 'Pending',
       rawInput: json['raw_input'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      createdAt: parseDate(json['created_at']),
+      updatedAt: parseDate(json['updated_at']),
       customer: json['customer'] != null ? Customer.fromJson(json['customer']) : null,
       updates: json['updates'] != null 
           ? (json['updates'] as List).map((i) => CallUpdate.fromJson(i)).toList()

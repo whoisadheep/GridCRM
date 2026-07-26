@@ -65,19 +65,9 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
     
     if (mounted) {
       if (call != null) {
-        // Optimistically add to UI list
-        ref.read(callsProvider.notifier).optimisticallyAddCall(call);
-        
-        final isOnline = await syncService.isOnline();
-        if (!isOnline) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Saved offline — will sync when back online.')),
-          );
-        }
-        
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => CallDetailScreen(callId: call.id ?? 0)),
+          MaterialPageRoute(builder: (_) => CallDetailScreen(callId: call.id ?? '')),
         );
       } else {
         setState(() => _saving = false);
@@ -104,7 +94,8 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
   @override
   Widget build(BuildContext context) {
     final calls = ref.watch(callsProvider);
-    final techs = ref.watch(techniciansProvider);
+    final techsAsync = ref.watch(techniciansProvider);
+    final techs = techsAsync.value ?? [];
     final techNames = techs.map((t) => t['name'] as String).toList();
     
     // If AI assigned a tech that isn't in our loaded list yet (or was deleted),

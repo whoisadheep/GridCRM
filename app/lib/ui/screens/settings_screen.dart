@@ -40,8 +40,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // Initialize push notifications if they just switched to technician
     ref.read(syncServiceProvider).initPushNotifications();
     
-    // Reload calls based on new settings
-    ref.read(callsProvider.notifier).loadCalls();
+    // Auto reloaded by stream in other screens
     
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved')));
@@ -63,7 +62,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final techs = ref.watch(techniciansProvider);
+    final techsAsync = ref.watch(techniciansProvider);
+    final techs = techsAsync.value ?? [];
     final techNames = techs.map((t) => t['name'] as String).toList();
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
 

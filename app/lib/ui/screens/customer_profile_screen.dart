@@ -97,7 +97,7 @@ class CustomerProfileScreen extends ConsumerWidget {
               const Text('No historical calls found.')
             else
               ...history.map((call) {
-                final callId = call.id ?? 0;
+                final callId = call.id ?? '';
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: GestureDetector(

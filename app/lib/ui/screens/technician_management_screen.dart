@@ -19,7 +19,7 @@ class _TechnicianManagementScreenState extends ConsumerState<TechnicianManagemen
     final pin = _pinCtrl.text.trim();
     if (name.isEmpty || pin.isEmpty) return;
 
-    final success = await ref.read(techniciansProvider.notifier).addTechnician(name, pin);
+    final success = await ref.read(syncServiceProvider).addTechnician(name, pin);
     if (success) {
       _nameCtrl.clear();
       _pinCtrl.clear();
@@ -35,7 +35,8 @@ class _TechnicianManagementScreenState extends ConsumerState<TechnicianManagemen
 
   @override
   Widget build(BuildContext context) {
-    final techs = ref.watch(techniciansProvider);
+    final techsAsync = ref.watch(techniciansProvider);
+    final techs = techsAsync.value ?? [];
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
@@ -109,7 +110,7 @@ class _TechnicianManagementScreenState extends ConsumerState<TechnicianManagemen
                               child: const Icon(Icons.delete, color: Colors.white),
                             ),
                             onDismissed: (direction) {
-                              ref.read(techniciansProvider.notifier).deleteTechnician(t['id']);
+                              ref.read(syncServiceProvider).deleteTechnician(t['id']);
                             },
                             child: ClayContainer(
                               color: baseColor,

@@ -7,7 +7,7 @@ import '../../models/call.dart';
 import 'customer_profile_screen.dart';
 
 class CallDetailScreen extends ConsumerStatefulWidget {
-  final int callId;
+  final String callId;
 
   const CallDetailScreen({super.key, required this.callId});
 
@@ -28,13 +28,16 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
 
   Future<void> _loadDetail() async {
     final syncService = ref.read(syncServiceProvider);
-    final call = await syncService.getCallDetail(widget.callId);
-    if (mounted) {
-      setState(() {
-        _call = call;
-        _loading = false;
-      });
-    }
+    // Firestore streams automatically, we can just use the stream instead of a future,
+    // but to keep it simple, we listen to it.
+    syncService.streamCallDetail(widget.callId).listen((call) {
+      if (mounted) {
+        setState(() {
+          _call = call;
+          _loading = false;
+        });
+      }
+    });
   }
 
   Future<void> _addUpdate(String? statusChange) async {
@@ -52,14 +55,7 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
     
     await syncService.updateCall(widget.callId, payload);
     
-    final isOnline = await syncService.isOnline();
-    if (!isOnline && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved offline — will sync when back online.')),
-      );
-    }
-    
-    _loadDetail(); // reload
+    // The stream listener above will automatically trigger _loadDetail/rebuild
   }
 
   Widget _statusButton(String label, Color color) {
@@ -142,8 +138,6 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
               if (confirm == true) {
                 final syncService = ref.read(syncServiceProvider);
                 await syncService.deleteCall(widget.callId);
-                // Also trigger list reload
-                ref.read(callsProvider.notifier).loadCalls();
                 if (mounted) Navigator.pop(context);
               }
             },

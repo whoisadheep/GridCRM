@@ -77,8 +77,7 @@ class _AssistantSheetState extends ConsumerState<AssistantSheet> {
           _message = data['message'] ?? "Command successful!";
           _controller.clear();
         });
-        // Refresh the list
-        ref.read(callsProvider.notifier).loadCalls();
+        // Auto-reloaded by stream
       } else {
         final data = jsonDecode(response.body);
         setState(() {

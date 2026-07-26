@@ -52,17 +52,6 @@ class _QuickCreateScreenState extends ConsumerState<QuickCreateScreen> {
     if (text.isEmpty) return;
 
     final syncService = ref.read(syncServiceProvider);
-    final isOnline = await syncService.isOnline();
-
-    if (!isOnline) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Offline - AI Extraction unavailable.')),
-        );
-        _submitManual();
-      }
-      return;
-    }
 
     setState(() => _isLoading = true);
     final extracted = await syncService.extractCallInfo(text);
@@ -159,7 +148,7 @@ class _QuickCreateScreenState extends ConsumerState<QuickCreateScreen> {
                             borderRadius: 30,
                             depth: 20,
                             curveType: CurveType.convex,
-                            surfaceColor: Colors.deepPurpleAccent.withOpacity(0.1),
+                            surfaceColor: Colors.deepPurpleAccent.withValues(alpha: 0.1),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
