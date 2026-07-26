@@ -63,7 +63,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
 
     return MaterialApp(
-      title: 'CRM App',
+      title: 'Grid CRM',
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFF2F6FA), // Soft pastel background
         colorScheme: ColorScheme.fromSeed(
