@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "111222135161",
+    "project_id": "grid-a4798",
+    "storage_bucket": "grid-a4798.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111222135161:android:0b0b385a000811e758f7a8",
+        "android_client_info": {
+          "package_name": "com.example.grid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCCRs0MVRF-OuBE_mZHCovXCYBYiu-UkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
