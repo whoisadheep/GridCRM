@@ -148,7 +148,7 @@ class SyncService {
           {
             'note': 'Call created.',
             'status_change': 'Pending',
-            'timestamp': FieldValue.serverTimestamp(),
+            'timestamp': Timestamp.now(),
           }
         ]
       };
@@ -179,7 +179,7 @@ class SyncService {
       final newUpdate = {
         'note': payload['note'] ?? 'Updated',
         'status_change': payload['status'],
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': Timestamp.now(),
       };
 
       await _firestore.runTransaction((transaction) async {
