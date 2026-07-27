@@ -15,7 +15,7 @@ def login():
     role = data['role']
     
     if role == 'admin':
-        username = data.get('username')
+        username = data.get('username', '').strip() if data.get('username') else None
         password = data.get('password')
         if not username or not password:
             return jsonify({"error": "Username and password required"}), 400
@@ -32,7 +32,7 @@ def login():
             return jsonify({"error": "Invalid admin credentials"}), 401
             
     elif role == 'technician':
-        name = data.get('name')
+        name = data.get('name', '').strip() if data.get('name') else None
         pin = data.get('pin')
         
         if not name or not pin:
@@ -61,7 +61,7 @@ def register():
     db = firestore.client()
     
     if role == 'admin':
-        username = data.get('username')
+        username = data.get('username', '').strip() if data.get('username') else None
         password = data.get('password')
         if not username or not password:
             return jsonify({"error": "Username and password required"}), 400
@@ -77,7 +77,7 @@ def register():
         return jsonify({"success": True, "message": "Admin account created"}), 201
         
     elif role == 'technician':
-        name = data.get('name')
+        name = data.get('name', '').strip() if data.get('name') else None
         pin = data.get('pin')
         if not name or not pin:
             return jsonify({"error": "Name and PIN required"}), 400
@@ -117,7 +117,7 @@ def notify_technician():
     if not data:
         return jsonify({"error": "Missing request body"}), 400
         
-    tech_name = data.get("technician_assigned")
+    tech_name = data.get("technician_assigned", "").strip() if data.get("technician_assigned") else None
     title = data.get("title", "New Call Assigned")
     body = data.get("body", "You have a new high priority call.")
     
@@ -167,24 +167,90 @@ def assistant_command():
         return jsonify({"error": "Could not understand command."}), 400
 
     action = intent.get("action")
+    target_name = intent.get("target_name", "").strip() if intent.get("target_name") else None
+    customer_name = intent.get("customer_name", "").strip() if intent.get("customer_name") else None
+    params = intent.get("parameters", {})
+    
     if action == "unknown":
-        reply = intent.get("reply", "I can only help manage service calls.")
+        reply = intent.get("reply", "I can only help manage service calls and technicians.")
         return jsonify({"message": reply}), 200
         
     if not firebase_admin._apps:
         return jsonify({"error": "Firebase not initialized"}), 500
         
     db = firestore.client()
-        
-    if action == "create_call":
-        customer_name = intent.get("customer_name") or "Unknown Customer"
-        phone = intent.get("phone")
-        if not phone:
-            return jsonify({"error": "I need a phone number to create a new call."}), 400
+    
+    if action == "get_technicians":
+        techs = db.collection('technicians').get()
+        names = [t.to_dict().get('name') for t in techs]
+        if names:
+            return jsonify({"message": f"The current technicians are: {', '.join(names)}."}), 200
+        return jsonify({"message": "There are no technicians currently registered."}), 200
+
+    elif action == "add_technician":
+        tech_name_raw = target_name or customer_name or params.get("technician_assigned")
+        tech_name = tech_name_raw.strip() if tech_name_raw else None
+        if not tech_name:
+            return jsonify({"error": "I need a name to add a technician."}), 400
             
+        pin = params.get("technician_pin", "0000")
+        spec = params.get("technician_specialty", "")
+        phone = params.get("phone", "")
+        
+        db.collection('technicians').add({
+            'name': tech_name, 'pin': pin, 'specialty': spec, 'phone': phone, 'email': '',
+            'created_at': firestore.SERVER_TIMESTAMP
+        })
+        return jsonify({"message": f"Successfully added {tech_name} as a technician."}), 200
+
+    elif action == "delete_technician":
+        if not target_name:
+            return jsonify({"error": "I need to know who to delete."}), 400
+        techs = db.collection('technicians').where('name', '==', target_name).get()
+        if not techs:
+            return jsonify({"error": f"Technician {target_name} not found."}), 404
+        for t in techs:
+            t.reference.delete()
+        return jsonify({"message": f"Successfully removed technician {target_name}."}), 200
+
+    elif action == "update_technician":
+        if not target_name:
+            return jsonify({"error": "I need to know who to update."}), 400
+        techs = db.collection('technicians').where('name', '==', target_name).get()
+        if not techs:
+            return jsonify({"error": f"Technician {target_name} not found."}), 404
+        updates = {}
+        if params.get("technician_specialty"): updates["specialty"] = params.get("technician_specialty")
+        if params.get("phone"): updates["phone"] = params.get("phone")
+        if updates:
+            techs[0].reference.update(updates)
+            return jsonify({"message": f"Successfully updated technician {target_name}."}), 200
+        return jsonify({"message": "No updates were specified."}), 200
+
+    elif action == "delete_call":
+        if not target_name:
+            return jsonify({"error": "I need the customer name to delete their call."}), 400
+        all_calls = db.collection('calls').get()
+        call_doc = next((c for c in all_calls if c.to_dict().get('customer', {}).get('name') and target_name.lower() in c.to_dict().get('customer', {}).get('name', '').lower()), None)
+        if not call_doc:
+            return jsonify({"error": f"No calls found for {target_name}."}), 404
+        call_doc.reference.delete()
+        return jsonify({"message": f"Successfully deleted the call for {target_name}."}), 200
+
+    elif action == "get_calls":
+        calls = db.collection('calls').where('status', '==', 'Pending').get()
+        if not calls:
+            return jsonify({"message": "There are currently no pending calls."}), 200
+        return jsonify({"message": f"There are {len(calls)} pending calls currently in the system."}), 200
+
+    elif action == "create_call":
+        c_name_raw = customer_name or target_name or "Unknown Customer"
+        c_name = c_name_raw.strip() if c_name_raw else "Unknown Customer"
+        phone = params.get("phone")
+        
         # Find or create customer
         customers_ref = db.collection('customers')
-        query = customers_ref.where('phone', '==', phone).get()
+        query = customers_ref.where('phone', '==', phone).get() if phone else None
         
         if query:
             customer_doc = query[0]
@@ -193,17 +259,14 @@ def assistant_command():
         else:
             # Create new customer
             _, new_customer_ref = customers_ref.add({
-                'name': customer_name,
-                'phone': phone,
+                'name': c_name,
+                'phone': phone or '',
                 'address': '',
                 'created_at': firestore.SERVER_TIMESTAMP
             })
             customer_id = new_customer_ref.id
-            customer_data = {'name': customer_name, 'phone': phone}
+            customer_data = {'name': c_name, 'phone': phone or ''}
             
-        updates = intent.get("updates", {})
-        
-        # Create call
         new_call_ref = db.collection('calls').document()
         call_data = {
             'customer_id': customer_id,
@@ -212,10 +275,10 @@ def assistant_command():
                 'phone': customer_data.get('phone', '')
             },
             'call_type': "Service",
-            'problem_description': updates.get("problem_description", "No description provided"),
-            'priority': updates.get("priority", "Medium"),
-            'status': updates.get("status", "Pending"),
-            'technician_assigned': updates.get("technician_assigned", None),
+            'problem_description': params.get("problem_description", "No description provided"),
+            'priority': params.get("priority", "Medium"),
+            'status': params.get("status", "Pending"),
+            'technician_assigned': params.get("technician_assigned", "").strip() if params.get("technician_assigned") else None,
             'raw_input': command_text,
             'created_at': firestore.SERVER_TIMESTAMP,
             'updated_at': firestore.SERVER_TIMESTAMP
@@ -233,75 +296,65 @@ def assistant_command():
             "message": f"Successfully created a new call for {customer_data['name']}."
         }), 200
 
-    if action != "update_call":
-        return jsonify({"error": "Action not supported."}), 400
-        
-    target_name = intent.get("target_name")
-    if not target_name:
-        return jsonify({"error": "Could not identify which customer to update."}), 400
-        
-    # Find the most recent call matching the target_name in its customer object
-    all_calls = db.collection('calls').order_by('created_at', direction=firestore.Query.DESCENDING).get()
-    
-    call_doc = None
-    matched_customer_name = None
-    
-    for c in all_calls:
-        c_data = c.to_dict()
-        cust = c_data.get('customer', {})
-        cust_name = cust.get('name', '')
-        if cust_name and target_name.lower() in cust_name.lower():
-            call_doc = c
-            matched_customer_name = cust_name
-            break
+    elif action == "update_call":
+        if not target_name:
+            return jsonify({"error": "Could not identify which customer to update."}), 400
             
-    if not call_doc:
-        return jsonify({"error": f"No active calls found for customer '{target_name}'."}), 404
+        all_calls = db.collection('calls').order_by('created_at', direction=firestore.Query.DESCENDING).get()
+        call_doc = None
+        matched_customer_name = None
         
-    call_data = call_doc.to_dict()
+        for c in all_calls:
+            c_data = c.to_dict()
+            cust = c_data.get('customer', {})
+            cust_name = cust.get('name', '')
+            if cust_name and target_name.lower() in cust_name.lower():
+                call_doc = c
+                matched_customer_name = cust_name
+                break
+                
+        if not call_doc:
+            return jsonify({"error": f"No active calls found for customer '{target_name}'."}), 404
+            
+        call_data = call_doc.to_dict()
+        new_status = params.get("status")
+        new_priority = params.get("priority")
+        new_tech = params.get("technician_assigned", "").strip() if params.get("technician_assigned") else None
         
-    updates = intent.get("updates", {})
-    new_status = updates.get("status")
-    new_priority = updates.get("priority")
-    new_tech = updates.get("technician_assigned")
-    
-    note_parts = []
-    update_payload = {'updated_at': firestore.SERVER_TIMESTAMP}
-    
-    if new_status and new_status != call_data.get('status'):
-        note_parts.append(f"Status changed to {new_status}")
-        update_payload['status'] = new_status
-    if new_priority and new_priority != call_data.get('priority'):
-        note_parts.append(f"Priority changed to {new_priority}")
-        update_payload['priority'] = new_priority
-    if new_tech and new_tech != call_data.get('technician_assigned'):
-        note_parts.append(f"Assigned to {new_tech}")
-        update_payload['technician_assigned'] = new_tech
+        note_parts = []
+        update_payload = {'updated_at': firestore.SERVER_TIMESTAMP}
         
-    if not note_parts:
-        return jsonify({"message": "No changes needed."}), 200
+        if new_status and new_status != call_data.get('status'):
+            note_parts.append(f"Status changed to {new_status}")
+            update_payload['status'] = new_status
+        if new_priority and new_priority != call_data.get('priority'):
+            note_parts.append(f"Priority changed to {new_priority}")
+            update_payload['priority'] = new_priority
+        if new_tech and new_tech != call_data.get('technician_assigned'):
+            note_parts.append(f"Assigned to {new_tech}")
+            update_payload['technician_assigned'] = new_tech
+            
+        if not note_parts:
+            return jsonify({"message": "No changes needed."}), 200
+            
+        call_doc.reference.update(update_payload)
+        update_note = "AI Assistant: " + ", ".join(note_parts)
         
-    # Update call
-    call_doc.reference.update(update_payload)
+        db.collection('call_updates').add({
+            'call_id': call_doc.id,
+            'note': update_note,
+            'status_change': new_status if new_status else None,
+            'created_at': firestore.SERVER_TIMESTAMP
+        })
         
-    update_note = "AI Assistant: " + ", ".join(note_parts)
-    
-    db.collection('call_updates').add({
-        'call_id': call_doc.id,
-        'note': update_note,
-        'status_change': new_status if new_status else None,
-        'created_at': firestore.SERVER_TIMESTAMP
-    })
-    
-    # Notify if assigned and high priority
-    if new_tech and call_data.get('priority') == 'High':
-        notify_technician_internal(new_tech, f"New High Priority Call: {matched_customer_name}", updates.get("problem_description", "Urgent"))
-    elif new_tech and new_priority == 'High':
-        notify_technician_internal(new_tech, f"Call Upgraded to High Priority: {matched_customer_name}", updates.get("problem_description", "Urgent"))
-    
-    return jsonify({
-        "message": f"Successfully updated call for {matched_customer_name}."
-    }), 200
+        if new_tech and call_data.get('priority') == 'High':
+            notify_technician_internal(new_tech, f"New High Priority Call: {matched_customer_name}", params.get("problem_description", "Urgent"))
+        elif new_tech and new_priority == 'High':
+            notify_technician_internal(new_tech, f"Call Upgraded to High Priority: {matched_customer_name}", params.get("problem_description", "Urgent"))
+        
+        return jsonify({"message": f"Successfully updated call for {matched_customer_name}."}), 200
+
+    return jsonify({"error": "Action not supported."}), 400
 
 def notify_technician_internal(tech_name, title, body):
     db = firestore.client()

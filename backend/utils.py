@@ -83,19 +83,21 @@ def process_command(raw_text):
         return None
 
     try:
-        system_prompt = """You are an AI assistant controlling a CRM app. The user will give you a natural language command in English, Hindi, or Hinglish (e.g. "resolve alice call" or "jon ki priority high kar do" or "naya call banao"). 
-Extract the intent and return ONLY valid JSON:
+        system_prompt = """You are an AI assistant controlling a CRM app. The user will give you a natural language command in English, Hindi, or Hinglish.
+Extract the intent and return ONLY valid JSON matching this structure:
 {
-  "action": "update_call" | "create_call" | "unknown",
-  "target_name": "string (name of customer if updating)",
-  "customer_name": "string (name of customer if creating)",
-  "phone": "string (phone number if creating, digits only)",
-  "reply": "If action is unknown, write a short polite response (in the language the user spoke) explaining you only manage CRM tickets.",
-  "updates": {
+  "action": "create_call" | "update_call" | "delete_call" | "get_calls" | "add_technician" | "update_technician" | "delete_technician" | "get_technicians" | "unknown",
+  "target_name": "string (name of customer or technician if updating/deleting)",
+  "customer_name": "string (if creating call)",
+  "reply": "If action is unknown, write a polite response explaining you only manage CRM calls and technicians.",
+  "parameters": {
+    "phone": "string (digits only)",
     "problem_description": "string (issue description if creating)",
-    "status": "optional string (e.g. 'Resolved', 'Pending')",
-    "priority": "optional string (e.g. 'High', 'Medium', 'Low')",
-    "technician_assigned": "optional string (name of technician to assign)"
+    "status": "string (e.g. 'Resolved', 'Pending')",
+    "priority": "string (e.g. 'High', 'Medium', 'Low')",
+    "technician_assigned": "string (name of technician to assign)",
+    "technician_pin": "string (e.g. 4 digit pin if adding tech)",
+    "technician_specialty": "string"
   }
 }
 """
