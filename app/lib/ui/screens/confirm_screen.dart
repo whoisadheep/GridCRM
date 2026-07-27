@@ -149,7 +149,11 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                       controller: controller,
                       focusNode: focusNode,
                       onEditingComplete: onEditingComplete,
-                      decoration: const InputDecoration(labelText: 'Phone Number', border: InputBorder.none),
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number', 
+                        border: InputBorder.none,
+                        icon: Icon(Icons.phone, color: Colors.blue),
+                      ),
                       keyboardType: TextInputType.phone,
                     );
                   },
@@ -204,7 +208,11 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                       controller: controller,
                       focusNode: focusNode,
                       onEditingComplete: onEditingComplete,
-                      decoration: const InputDecoration(labelText: 'Customer Name', border: InputBorder.none),
+                      decoration: const InputDecoration(
+                        labelText: 'Customer Name', 
+                        border: InputBorder.none,
+                        icon: Icon(Icons.person, color: Colors.blue),
+                      ),
                     );
                   },
                   optionsViewBuilder: (context, onSelected, options) {
@@ -242,7 +250,11 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                   value: _callType,
                   items: callTypes.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
                   onChanged: (v) => setState(() => _callType = v!),
-                  decoration: const InputDecoration(labelText: 'Call Type', border: InputBorder.none),
+                  decoration: const InputDecoration(
+                    labelText: 'Call Type', 
+                    border: InputBorder.none,
+                    icon: Icon(Icons.category, color: Colors.blue),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -251,7 +263,11 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                   value: _priority,
                   items: priorities.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
                   onChanged: (v) => setState(() => _priority = v!),
-                  decoration: const InputDecoration(labelText: 'Priority', border: InputBorder.none),
+                  decoration: const InputDecoration(
+                    labelText: 'Priority', 
+                    border: InputBorder.none,
+                    icon: Icon(Icons.flag, color: Colors.blue),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -263,7 +279,11 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                     ...availableTechs.map((t) => DropdownMenuItem(value: t, child: Text(t)))
                   ],
                   onChanged: (v) => setState(() => _selectedTech = v),
-                  decoration: const InputDecoration(labelText: 'Technician Assigned (Optional)', border: InputBorder.none),
+                  decoration: const InputDecoration(
+                    labelText: 'Technician Assigned', 
+                    border: InputBorder.none,
+                    icon: Icon(Icons.engineering, color: Colors.blue),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -272,7 +292,11 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                 child: TextField(
                   controller: _problemCtrl,
                   maxLines: 4,
-                  decoration: const InputDecoration(labelText: 'Problem Description', border: InputBorder.none),
+                  decoration: const InputDecoration(
+                    labelText: 'Problem Description', 
+                    border: InputBorder.none,
+                    icon: Icon(Icons.description, color: Colors.blue),
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
