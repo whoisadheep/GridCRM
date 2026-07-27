@@ -13,10 +13,18 @@ def create_app():
     CORS(app)
 
     # Initialize Firebase Admin
-    cred_path = os.path.join(os.path.dirname(__file__), 'firebase-admin.json')
-    if os.path.exists(cred_path) and not firebase_admin._apps:
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
+    if not firebase_admin._apps:
+        firebase_json_str = os.environ.get('FIREBASE_ADMIN_JSON')
+        if firebase_json_str:
+            import json
+            cred_dict = json.loads(firebase_json_str)
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred)
+        else:
+            cred_path = os.path.join(os.path.dirname(__file__), 'firebase-admin.json')
+            if os.path.exists(cred_path):
+                cred = credentials.Certificate(cred_path)
+                firebase_admin.initialize_app(cred)
 
     # Register blueprints
     app.register_blueprint(api_bp, url_prefix='/api')
