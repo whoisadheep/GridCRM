@@ -161,7 +161,7 @@ class SyncService {
       return Call.fromJson(docSnap.data() as Map<String, dynamic>, docId: docSnap.id);
     } catch (e) {
       print('Create call error: $e');
-      return null;
+      rethrow;
     }
   }
 

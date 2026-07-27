@@ -61,17 +61,23 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
       'raw_input': widget.initialData['raw_input'] ?? '',
     };
 
-    final call = await syncService.createCall(payload);
-    
-    if (mounted) {
-      if (call != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => CallDetailScreen(callId: call.id ?? '')),
-        );
-      } else {
+    try {
+      final call = await syncService.createCall(payload);
+      if (mounted) {
+        if (call != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => CallDetailScreen(callId: call.id ?? '')),
+          );
+        } else {
+          setState(() => _saving = false);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Save failed (returned null)')));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() => _saving = false);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Save failed.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
