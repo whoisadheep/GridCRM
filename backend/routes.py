@@ -233,31 +233,24 @@ def assistant_command():
     if not target_name:
         return jsonify({"error": "Could not identify which customer to update."}), 400
         
-    # Find customer
-    all_customers = db.collection('customers').get()
-    matched_customer_id = None
+    # Find the most recent call matching the target_name in its customer object
+    all_calls = db.collection('calls').order_by('created_at', direction=firestore.Query.DESCENDING).get()
+    
+    call_doc = None
     matched_customer_name = None
     
-    for c in all_customers:
+    for c in all_calls:
         c_data = c.to_dict()
-        if c_data.get('name') and target_name.lower() in c_data['name'].lower():
-            matched_customer_id = c.id
-            matched_customer_name = c_data['name']
+        cust = c_data.get('customer', {})
+        cust_name = cust.get('name', '')
+        if cust_name and target_name.lower() in cust_name.lower():
+            call_doc = c
+            matched_customer_name = cust_name
             break
             
-    if not matched_customer_id:
-        return jsonify({"error": f"Customer '{target_name}' not found."}), 404
+    if not call_doc:
+        return jsonify({"error": f"No active calls found for customer '{target_name}'."}), 404
         
-    # Get their most recent call
-    customer_calls = db.collection('calls')\
-        .where('customer_id', '==', matched_customer_id)\
-        .order_by('created_at', direction=firestore.Query.DESCENDING)\
-        .limit(1).get()
-        
-    if not customer_calls:
-        return jsonify({"error": f"No calls found for customer '{matched_customer_name}'."}), 404
-        
-    call_doc = customer_calls[0]
     call_data = call_doc.to_dict()
         
     updates = intent.get("updates", {})
