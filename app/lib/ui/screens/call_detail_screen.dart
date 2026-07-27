@@ -92,6 +92,33 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
     );
   }
 
+  Future<void> _shareToWhatsApp() async {
+    final phone = _call?.customer?.phone;
+    if (phone == null || phone.isEmpty) return;
+    
+    // Clean phone number (remove non-digits, possibly keeping + for country code if we want, but let's just use it directly)
+    final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
+    
+    final tech = _call?.technicianAssigned ?? 'one of our technicians';
+    final problem = _call?.problemDescription ?? 'your inquiry';
+    
+    final text = 'Hello ${_call?.customer?.name ?? ''}, your inquiry regarding "$problem" has been registered. $tech will be assigned shortly.';
+    final encodedText = Uri.encodeComponent(text);
+    
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=$encodedText');
+    
+    try {
+      final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp not installed or could not be opened.')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp.')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -177,6 +204,26 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(_call!.customer?.phone ?? ''),
+                          if (ref.read(roleProvider) == 'admin' && _call!.customer?.phone != null && _call!.customer!.phone!.isNotEmpty)
+                            GestureDetector(
+                              onTap: _shareToWhatsApp,
+                              child: ClayContainer(
+                                color: const Color(0xFF25D366), // WhatsApp Green
+                                borderRadius: 10,
+                                depth: 10,
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.chat, size: 16, color: Colors.white),
+                                      SizedBox(width: 4),
+                                      Text('WhatsApp', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
                         ],
                       ),
                       const SizedBox(height: 16),
