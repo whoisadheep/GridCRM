@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final settingsProvider = Provider((ref) => SettingsService());
+final roleProvider = StateProvider<String>((ref) => '');
 
 class SettingsService {
   Future<String> getBaseUrl() async {

@@ -127,17 +127,18 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
             onPressed: () => setState(() => _selectedIds.clear()),
           ),
         ] : [
-          IconButton(
-            icon: const Icon(Icons.auto_awesome, color: Colors.blue),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const AssistantSheet(),
-              );
-            },
-          ),
+          if (_role == 'admin')
+            IconButton(
+              icon: const Icon(Icons.auto_awesome, color: Colors.blue),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => const AssistantSheet(),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () async {
@@ -269,7 +270,11 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: GestureDetector(
-                      onLongPress: () => _toggleSelection(callId),
+                      onLongPress: () {
+                        if (_role == 'admin') {
+                          _toggleSelection(callId);
+                        }
+                      },
                       onTap: () {
                         if (isSelectionMode) {
                           _toggleSelection(callId);
@@ -373,7 +378,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
           ),
         ],
       ),
-      floatingActionButton: isSelectionMode ? null : SafeArea(
+      floatingActionButton: (isSelectionMode || _role == 'technician') ? null : SafeArea(
         child: GestureDetector(
           onTap: () {
             Navigator.push(

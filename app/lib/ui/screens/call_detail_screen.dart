@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/sync_service.dart';
+import '../../core/settings.dart';
 import '../../models/call.dart';
 import 'customer_profile_screen.dart';
 
@@ -137,8 +138,9 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
       appBar: AppBar(
         title: Text('Call #${_call!.id}', style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.red),
+          if (ref.read(roleProvider) == 'admin')
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.red),
             onPressed: () async {
               final confirm = await showDialog<bool>(
                 context: context,
@@ -249,31 +251,33 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
             ),
             const SizedBox(height: 32),
             
-            // Re-assign Technician
-            const Text('Assign Technician', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 16),
-            ClayContainer(
-              color: baseColor,
-              borderRadius: 12,
-              depth: 15,
-              emboss: true,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: (_call!.technicianAssigned != null && _call!.technicianAssigned!.isNotEmpty) ? _call!.technicianAssigned : null,
-                    hint: const Text('Unassigned'),
-                    items: [
-                      const DropdownMenuItem<String>(value: null, child: Text('Unassigned')),
-                      ...availableTechs.map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    ],
-                    onChanged: (v) => _reassignTechnician(v),
+            if (ref.read(roleProvider) == 'admin') ...[
+              // Re-assign Technician
+              const Text('Assign Technician', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 16),
+              ClayContainer(
+                color: baseColor,
+                borderRadius: 12,
+                depth: 15,
+                emboss: true,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: (_call!.technicianAssigned != null && _call!.technicianAssigned!.isNotEmpty) ? _call!.technicianAssigned : null,
+                      hint: const Text('Unassigned'),
+                      items: [
+                        const DropdownMenuItem<String>(value: null, child: Text('Unassigned')),
+                        ...availableTechs.map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                      ],
+                      onChanged: (v) => _reassignTechnician(v),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 32),
+            ],
             
             // Note Input
             Row(

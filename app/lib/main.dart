@@ -37,6 +37,10 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future<void> _checkLogin() async {
     final settings = ref.read(settingsProvider);
     final loggedIn = await settings.isLoggedIn();
+    if (loggedIn) {
+      final role = await settings.getRole();
+      ref.read(roleProvider.notifier).state = role;
+    }
     if (mounted) {
       setState(() {
         _isLoggedIn = loggedIn;

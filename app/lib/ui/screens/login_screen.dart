@@ -62,6 +62,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         await settings.setLoggedIn(true);
         await settings.setRole(data['role']);
+        ref.read(roleProvider.notifier).state = data['role'];
         if (data['role'] == 'technician') {
           await settings.setAssignedTechnician(data['technician_name']);
         }
