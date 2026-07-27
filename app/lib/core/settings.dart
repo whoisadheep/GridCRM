@@ -7,7 +7,7 @@ final roleProvider = StateProvider<String>((ref) => '');
 
 class SettingsService {
   Future<String> getBaseUrl() async {
-    return 'https://gridcrm-production-9915.up.railway.app/api'; // Can be made dynamic later
+    return 'https://gridcrm.onrender.com/api'; // Can be made dynamic later
   }
 
   Future<void> setBaseUrl(String url) async {}

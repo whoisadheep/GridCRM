@@ -81,7 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Network error')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
