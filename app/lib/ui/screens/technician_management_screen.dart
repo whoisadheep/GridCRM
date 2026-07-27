@@ -17,7 +17,14 @@ class _TechnicianManagementScreenState extends ConsumerState<TechnicianManagemen
   Future<void> _addTechnician() async {
     final name = _nameCtrl.text.trim();
     final pin = _pinCtrl.text.trim();
-    if (name.isEmpty || pin.isEmpty) return;
+    if (name.isEmpty || pin.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please type a name and PIN in the text fields first.')),
+        );
+      }
+      return;
+    }
 
     try {
       final success = await ref.read(syncServiceProvider).addTechnician(name, pin);
