@@ -88,10 +88,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const Text('App Profile', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       value: _role,
                       items: const [
-                        DropdownMenuItem(value: 'admin', child: Text('Admin (Sees all calls)')),
-                        DropdownMenuItem(value: 'technician', child: Text('Technician (Sees only assigned calls)')),
+                        DropdownMenuItem(value: 'admin', child: Text('Admin')),
+                        DropdownMenuItem(value: 'technician', child: Text('Technician')),
                       ],
                       onChanged: (v) => setState(() => _role = v!),
                       decoration: const InputDecoration(labelText: 'Role', border: InputBorder.none),
@@ -99,6 +100,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     if (_role == 'technician') ...[
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
+                        isExpanded: true,
                         value: _selectedTech,
                         items: [
                           const DropdownMenuItem<String>(value: null, child: Text('Select a technician...')),
