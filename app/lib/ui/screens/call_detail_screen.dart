@@ -58,6 +58,18 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
     // The stream listener above will automatically trigger _loadDetail/rebuild
   }
 
+  Future<void> _reassignTechnician(String? techName) async {
+    if (techName == null || techName == _call?.technicianAssigned) return;
+    
+    final syncService = ref.read(syncServiceProvider);
+    final payload = {
+      'note': 'Re-assigned to $techName',
+      'technician_assigned': techName,
+    };
+    
+    await syncService.updateCall(widget.callId, payload);
+  }
+
   Widget _statusButton(String label, Color color) {
     return Expanded(
       child: GestureDetector(
@@ -112,6 +124,14 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
     if (_call == null) return const Scaffold(body: Center(child: Text('Call not found or pending sync')));
 
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
+    final techsAsync = ref.watch(techniciansProvider);
+    final techs = techsAsync.value ?? [];
+    final techNames = techs.map((t) => t['name'] as String).toList();
+    
+    final availableTechs = List<String>.from(techNames);
+    if (_call!.technicianAssigned != null && _call!.technicianAssigned!.isNotEmpty && !availableTechs.contains(_call!.technicianAssigned)) {
+      availableTechs.add(_call!.technicianAssigned!);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -226,6 +246,32 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
                 const SizedBox(width: 16),
                 _statusButton('Resolved', Colors.green),
               ],
+            ),
+            const SizedBox(height: 32),
+            
+            // Re-assign Technician
+            const Text('Assign Technician', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 16),
+            ClayContainer(
+              color: baseColor,
+              borderRadius: 12,
+              depth: 15,
+              emboss: true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: (_call!.technicianAssigned != null && _call!.technicianAssigned!.isNotEmpty) ? _call!.technicianAssigned : null,
+                    hint: const Text('Unassigned'),
+                    items: [
+                      const DropdownMenuItem<String>(value: null, child: Text('Unassigned')),
+                      ...availableTechs.map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    ],
+                    onChanged: (v) => _reassignTechnician(v),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 32),
             
