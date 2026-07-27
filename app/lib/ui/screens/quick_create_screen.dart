@@ -166,11 +166,6 @@ class _QuickCreateScreenState extends ConsumerState<QuickCreateScreen> {
                         child: GestureDetector(
                           onTap: _submitAI,
                           child: ClayContainer(
-                            color: baseColor,
-                            height: 60,
-                            borderRadius: 30,
-                            depth: 20,
-                            curveType: CurveType.convex,
                             color: const Color(0xFF9C27B0),
                             height: 60,
                             borderRadius: 30,
