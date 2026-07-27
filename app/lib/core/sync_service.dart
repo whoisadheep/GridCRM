@@ -76,6 +76,10 @@ class SyncService {
       return snapshot.docs.map((doc) {
         return Call.fromJson(doc.data() as Map<String, dynamic>, docId: doc.id);
       }).toList();
+    }).handleError((error) {
+      print('Calls stream error: $error');
+      // Return empty list on error (e.g., permission denied) so UI doesn't crash
+      return <Call>[]; 
     });
   }
 
@@ -86,6 +90,9 @@ class SyncService {
         data['id'] = doc.id;
         return data;
       }).toList();
+    }).handleError((error) {
+      print('Technicians stream error: $error');
+      return <Map<String, dynamic>>[];
     });
   }
 
