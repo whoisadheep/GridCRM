@@ -109,7 +109,7 @@ class SyncService {
       return true;
     } catch (e) {
       print('Add technician error: $e');
-      return false;
+      rethrow;
     }
   }
 

@@ -19,16 +19,18 @@ class _TechnicianManagementScreenState extends ConsumerState<TechnicianManagemen
     final pin = _pinCtrl.text.trim();
     if (name.isEmpty || pin.isEmpty) return;
 
-    final success = await ref.read(syncServiceProvider).addTechnician(name, pin);
-    if (success) {
-      _nameCtrl.clear();
-      _pinCtrl.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Technician added')));
+    try {
+      final success = await ref.read(syncServiceProvider).addTechnician(name, pin);
+      if (success) {
+        _nameCtrl.clear();
+        _pinCtrl.clear();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Technician added')));
+        }
       }
-    } else {
+    } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to add technician')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
