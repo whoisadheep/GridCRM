@@ -89,9 +89,10 @@ class _QuickCreateScreenState extends ConsumerState<QuickCreateScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Quick Create', style: TextStyle(fontWeight: FontWeight.bold))),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
           children: [
             Expanded(
               child: ClayContainer(
@@ -205,9 +206,10 @@ class _QuickCreateScreenState extends ConsumerState<QuickCreateScreen> {
                   ),
                 ],
               )
-          ],
+              ],
+            ),
+          ),
         ),
-      ),
-    );
+      );
   }
 }
