@@ -76,62 +76,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ClayContainer(
-              color: baseColor,
-              borderRadius: 16,
-              depth: 20,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text('App Profile', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      value: _role,
-                      items: const [
-                        DropdownMenuItem(value: 'admin', child: Text('Admin')),
-                        DropdownMenuItem(value: 'technician', child: Text('Technician')),
-                      ],
-                      onChanged: (v) => setState(() => _role = v!),
-                      decoration: const InputDecoration(labelText: 'Role', border: InputBorder.none),
-                    ),
-                    if (_role == 'technician') ...[
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        value: _selectedTech,
-                        items: [
-                          const DropdownMenuItem<String>(value: null, child: Text('Select a technician...')),
-                          ...techNames.map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                        ],
-                        onChanged: (v) => setState(() => _selectedTech = v),
-                        decoration: const InputDecoration(labelText: 'Assigned Technician', border: InputBorder.none),
-                      ),
-                    ]
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-            GestureDetector(
-              onTap: _saveSettings,
-              child: ClayContainer(
-                color: const Color(0xFF4285F4),
-                height: 60,
-                borderRadius: 30,
-                depth: 20,
-                curveType: CurveType.convex,
-                child: const Center(
-                  child: Text(
-                    'Save Settings',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+            // App Profile section removed because we now have real user accounts via Login!
+
             GestureDetector(
               onTap: _logout,
               child: ClayContainer(
