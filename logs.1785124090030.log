@@ -1,0 +1,199 @@
+2026-07-27T03:43:58.968771942Z [err]  [2026-07-27 03:43:58 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:43:58.968774802Z [err]  [2026-07-27 03:43:58 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:43:58.968777422Z [err]  [2026-07-27 03:43:58 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:43:58.968779892Z [err]  [2026-07-27 03:43:58 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:43:58.968782602Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:43:58.968787132Z [err]  [2026-07-27 03:43:58 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:43:58.968789592Z [err]  [2026-07-27 03:43:58 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:43:58.968792412Z [err]  [2026-07-27 03:43:58 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:43:58.968794862Z [err]  [2026-07-27 03:43:58 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:43:59.093268323Z [inf]  Starting Container
+2026-07-27T03:43:59.993046440Z [err]  [2026-07-27 03:43:59 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:43:59.993048700Z [err]  [2026-07-27 03:43:59 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:43:59.993051010Z [err]  [2026-07-27 03:43:59 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:43:59.993053950Z [err]  [2026-07-27 03:43:59 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:00.276149136Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:00.276152206Z [err]  [2026-07-27 03:44:00 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:00.369666108Z [err]  [2026-07-27 03:44:00 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:00.369670358Z [err]  [2026-07-27 03:44:00 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:00.369674148Z [err]  [2026-07-27 03:44:00 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:01.316217280Z [err]  [2026-07-27 03:44:01 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:01.316222840Z [err]  [2026-07-27 03:44:01 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:01.316228120Z [err]  [2026-07-27 03:44:01 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:01.317203814Z [err]  [2026-07-27 03:44:01 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:01.698521789Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:01.698526279Z [err]  [2026-07-27 03:44:01 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:01.787881444Z [err]  [2026-07-27 03:44:01 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:01.787885924Z [err]  [2026-07-27 03:44:01 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:01.787891714Z [err]  [2026-07-27 03:44:01 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:02.776365783Z [err]  [2026-07-27 03:44:02 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:02.776369533Z [err]  [2026-07-27 03:44:02 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:02.776373523Z [err]  [2026-07-27 03:44:02 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:02.776376693Z [err]  [2026-07-27 03:44:02 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:03.151960437Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:03.151965617Z [err]  [2026-07-27 03:44:03 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:03.247814498Z [err]  [2026-07-27 03:44:03 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:03.247822318Z [err]  [2026-07-27 03:44:03 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:03.247825348Z [err]  [2026-07-27 03:44:03 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:04.253989272Z [err]  [2026-07-27 03:44:04 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:04.253998132Z [err]  [2026-07-27 03:44:04 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:04.254019312Z [err]  [2026-07-27 03:44:04 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:04.254022822Z [err]  [2026-07-27 03:44:04 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:04.622099207Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:04.622101857Z [err]  [2026-07-27 03:44:04 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:04.761496826Z [err]  [2026-07-27 03:44:04 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:04.761500246Z [err]  [2026-07-27 03:44:04 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:04.761503146Z [err]  [2026-07-27 03:44:04 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:05.621521218Z [err]  [2026-07-27 03:44:05 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:05.621525518Z [err]  [2026-07-27 03:44:05 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:05.621528478Z [err]  [2026-07-27 03:44:05 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:05.626239353Z [err]  [2026-07-27 03:44:05 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:06.016965887Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:06.016969497Z [err]  [2026-07-27 03:44:06 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:06.095546349Z [err]  [2026-07-27 03:44:06 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:06.095557309Z [err]  [2026-07-27 03:44:06 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:06.095562419Z [err]  [2026-07-27 03:44:06 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:07.128672672Z [err]  [2026-07-27 03:44:07 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:07.128680102Z [err]  [2026-07-27 03:44:07 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:07.128684582Z [err]  [2026-07-27 03:44:07 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:07.133184728Z [err]  [2026-07-27 03:44:07 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:07.628177158Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:07.628179828Z [err]  [2026-07-27 03:44:07 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:07.628182608Z [err]  [2026-07-27 03:44:07 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:07.628186148Z [err]  [2026-07-27 03:44:07 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:07.628189138Z [err]  [2026-07-27 03:44:07 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:08.651991690Z [err]  [2026-07-27 03:44:08 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:08.651996260Z [err]  [2026-07-27 03:44:08 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:08.651999260Z [err]  [2026-07-27 03:44:08 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:08.652002760Z [err]  [2026-07-27 03:44:08 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:09.103983998Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:09.103992868Z [err]  [2026-07-27 03:44:09 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:09.143871397Z [err]  [2026-07-27 03:44:09 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:09.143875107Z [err]  [2026-07-27 03:44:09 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:09.143878127Z [err]  [2026-07-27 03:44:09 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:10.138603693Z [err]  [2026-07-27 03:44:10 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:10.138606673Z [err]  [2026-07-27 03:44:10 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:10.138610953Z [err]  [2026-07-27 03:44:10 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:10.138613493Z [err]  [2026-07-27 03:44:10 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:10.569120406Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:10.569142806Z [err]  [2026-07-27 03:44:10 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:10.710371047Z [err]  [2026-07-27 03:44:10 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:10.710377417Z [err]  [2026-07-27 03:44:10 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:10.710380427Z [err]  [2026-07-27 03:44:10 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:11.704352477Z [err]  [2026-07-27 03:44:11 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:11.704362217Z [err]  [2026-07-27 03:44:11 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:11.704365226Z [err]  [2026-07-27 03:44:11 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:11.704367886Z [err]  [2026-07-27 03:44:11 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:12.114415069Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:12.114418939Z [err]  [2026-07-27 03:44:12 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:12.248864765Z [err]  [2026-07-27 03:44:12 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:12.248874205Z [err]  [2026-07-27 03:44:12 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:12.248879365Z [err]  [2026-07-27 03:44:12 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:44:13.258984490Z [err]  [2026-07-27 03:44:13 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:44:13.258987750Z [err]  [2026-07-27 03:44:13 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:44:13.258991160Z [err]  [2026-07-27 03:44:13 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:44:13.258993990Z [err]  [2026-07-27 03:44:13 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:44:13.606486034Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:44:13.606492054Z [err]  [2026-07-27 03:44:13 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:44:13.700964702Z [err]  [2026-07-27 03:44:13 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:44:13.700970332Z [err]  [2026-07-27 03:44:13 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:44:13.700973422Z [err]  [2026-07-27 03:44:13 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:03.944021457Z [err]  [2026-07-27 03:44:59 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:03.944027807Z [err]  [2026-07-27 03:44:59 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:03.944033467Z [err]  [2026-07-27 03:44:59 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:03.944040367Z [err]  [2026-07-27 03:44:59 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:03.944045317Z [err]  [2026-07-27 03:45:00 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:03.944045807Z [err]  [2026-07-27 03:44:57 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:03.944050097Z [err]  [2026-07-27 03:45:00 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:03.944056637Z [err]  [2026-07-27 03:44:57 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:03.944062057Z [err]  [2026-07-27 03:44:57 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:03.944066337Z [err]  [2026-07-27 03:44:57 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:03.944070047Z [err]  [2026-07-27 03:44:58 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:03.944074807Z [err]  [2026-07-27 03:44:58 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:03.944078317Z [err]  [2026-07-27 03:44:58 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:03.944081697Z [err]  [2026-07-27 03:44:58 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:03.944085507Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:03.944112307Z [err]  [2026-07-27 03:44:57 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:03.944115797Z [err]  [2026-07-27 03:44:57 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:03.944119576Z [err]  [2026-07-27 03:44:57 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:03.944123166Z [err]  [2026-07-27 03:44:57 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:03.944127426Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:03.945349900Z [err]  [2026-07-27 03:45:00 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:03.945356490Z [err]  [2026-07-27 03:45:00 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:03.945359680Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:03.945363210Z [err]  [2026-07-27 03:45:00 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:03.945368170Z [err]  [2026-07-27 03:45:00 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:03.945372190Z [err]  [2026-07-27 03:45:00 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:03.945375960Z [err]  [2026-07-27 03:45:00 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:03.945379140Z [err]  [2026-07-27 03:45:01 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:03.945382500Z [err]  [2026-07-27 03:45:01 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:03.945386250Z [err]  [2026-07-27 03:45:01 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:03.945391440Z [err]  [2026-07-27 03:45:01 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:03.945395030Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:03.945398370Z [err]  [2026-07-27 03:45:02 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:03.945401550Z [err]  [2026-07-27 03:45:02 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:03.945405060Z [err]  [2026-07-27 03:45:02 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:03.945408350Z [err]  [2026-07-27 03:45:02 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:03.945411310Z [err]  [2026-07-27 03:45:03 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:03.945414240Z [err]  [2026-07-27 03:45:03 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:03.945417120Z [err]  [2026-07-27 03:45:03 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:03.945422800Z [err]  [2026-07-27 03:45:03 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:03.946711653Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:03.946715023Z [err]  [2026-07-27 03:45:03 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:03.946720303Z [err]  [2026-07-27 03:45:03 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:03.946723933Z [err]  [2026-07-27 03:45:03 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:03.946727343Z [err]  [2026-07-27 03:45:03 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:05.068714552Z [err]  [2026-07-27 03:45:05 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:05.068717662Z [err]  [2026-07-27 03:45:05 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:05.068720352Z [err]  [2026-07-27 03:45:05 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:05.069645427Z [err]  [2026-07-27 03:45:05 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:05.464026265Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:05.464031235Z [err]  [2026-07-27 03:45:05 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:05.619771939Z [err]  [2026-07-27 03:45:05 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:05.619778339Z [err]  [2026-07-27 03:45:05 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:05.619782419Z [err]  [2026-07-27 03:45:05 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:06.468134989Z [err]  [2026-07-27 03:45:06 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:06.468138589Z [err]  [2026-07-27 03:45:06 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:06.468141579Z [err]  [2026-07-27 03:45:06 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:06.468144319Z [err]  [2026-07-27 03:45:06 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:06.855982863Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:06.855986043Z [err]  [2026-07-27 03:45:06 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:07.116770999Z [err]  [2026-07-27 03:45:06 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:07.116777769Z [err]  [2026-07-27 03:45:06 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:07.116781679Z [err]  [2026-07-27 03:45:06 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:08.140759279Z [err]  [2026-07-27 03:45:07 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:08.140764029Z [err]  [2026-07-27 03:45:07 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:08.140766579Z [err]  [2026-07-27 03:45:07 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:08.140769449Z [err]  [2026-07-27 03:45:07 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:08.411674012Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:08.411676972Z [err]  [2026-07-27 03:45:08 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:08.512543777Z [err]  [2026-07-27 03:45:08 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:08.512547537Z [err]  [2026-07-27 03:45:08 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:08.512551387Z [err]  [2026-07-27 03:45:08 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:09.665577912Z [err]  [2026-07-27 03:45:09 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:09.665580112Z [err]  [2026-07-27 03:45:09 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:09.665585702Z [err]  [2026-07-27 03:45:09 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:09.665588352Z [err]  [2026-07-27 03:45:09 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:10.124007830Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:10.124011040Z [err]  [2026-07-27 03:45:09 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:10.124014130Z [err]  [2026-07-27 03:45:10 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:10.124016760Z [err]  [2026-07-27 03:45:10 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:10.124019660Z [err]  [2026-07-27 03:45:10 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:11.155089732Z [err]  [2026-07-27 03:45:11 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:11.155098362Z [err]  [2026-07-27 03:45:11 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:11.155102232Z [err]  [2026-07-27 03:45:11 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:11.155105792Z [err]  [2026-07-27 03:45:11 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:11.575169694Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:11.575179904Z [err]  [2026-07-27 03:45:11 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:11.656647002Z [err]  [2026-07-27 03:45:11 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:11.656652892Z [err]  [2026-07-27 03:45:11 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:11.656656722Z [err]  [2026-07-27 03:45:11 +0000] [1] [ERROR] Reason: App failed to load.
+2026-07-27T03:45:12.587459187Z [err]  [2026-07-27 03:45:12 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2026-07-27T03:45:12.587468726Z [err]  [2026-07-27 03:45:12 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2026-07-27T03:45:12.587473516Z [err]  [2026-07-27 03:45:12 +0000] [1] [INFO] Using worker: sync
+2026-07-27T03:45:12.587477516Z [err]  [2026-07-27 03:45:12 +0000] [2] [INFO] Booting worker with pid: 2
+2026-07-27T03:45:12.963813480Z [err]  Failed to find attribute 'app' in 'app'.
+2026-07-27T03:45:12.963816950Z [err]  [2026-07-27 03:45:12 +0000] [2] [INFO] Worker exiting (pid: 2)
+2026-07-27T03:45:13.151970393Z [err]  [2026-07-27 03:45:13 +0000] [1] [ERROR] Worker (pid:2) exited with code 4
+2026-07-27T03:45:13.151972913Z [err]  [2026-07-27 03:45:13 +0000] [1] [ERROR] Shutting down: Master
+2026-07-27T03:45:13.151975383Z [err]  [2026-07-27 03:45:13 +0000] [1] [ERROR] Reason: App failed to load.

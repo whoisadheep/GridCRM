@@ -5,7 +5,7 @@ final settingsProvider = Provider((ref) => SettingsService());
 
 class SettingsService {
   Future<String> getBaseUrl() async {
-    return 'http://192.168.1.9:5000/api'; // Can be made dynamic later
+    return 'https://gridcrm-production-9915.up.railway.app/api'; // Can be made dynamic later
   }
 
   Future<void> setBaseUrl(String url) async {}
