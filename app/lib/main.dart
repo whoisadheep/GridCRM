@@ -72,12 +72,15 @@ class _MyAppState extends ConsumerState<MyApp> {
         scaffoldBackgroundColor: const Color(0xFFF2F6FA), // Soft pastel background
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF4285F4), // Google-esque blue
+          brightness: Brightness.light,
           surface: const Color(0xFFF2F6FA),
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFF2F6FA),
           elevation: 0,
           scrolledUnderElevation: 0,
+          iconTheme: IconThemeData(color: Colors.black87),
+          titleTextStyle: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         useMaterial3: true,
       ),

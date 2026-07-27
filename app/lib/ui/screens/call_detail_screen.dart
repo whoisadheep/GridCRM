@@ -6,6 +6,7 @@ import '../../core/sync_service.dart';
 import '../../core/settings.dart';
 import '../../models/call.dart';
 import 'customer_profile_screen.dart';
+import 'confirm_screen.dart';
 
 class CallDetailScreen extends ConsumerStatefulWidget {
   final String callId;
@@ -138,7 +139,24 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
       appBar: AppBar(
         title: Text('Call #${_call!.id}', style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          if (ref.read(roleProvider) == 'admin')
+          if (ref.read(roleProvider) == 'admin') ...[
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: () {
+                final callData = {
+                  'customer_name': _call!.customer?.name,
+                  'phone_number': _call!.customer?.phone,
+                  'call_type': _call!.callType,
+                  'priority': _call!.priority,
+                  'problem_description': _call!.problemDescription,
+                  'technician_assigned': _call!.technicianAssigned,
+                };
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ConfirmScreen(initialData: callData, callId: _call!.id)),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.red),
             onPressed: () async {
@@ -163,7 +181,8 @@ class _CallDetailScreenState extends ConsumerState<CallDetailScreen> {
                 if (mounted) Navigator.pop(context);
               }
             },
-          )
+          ),
+          ],
         ],
       ),
       body: SingleChildScrollView(

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,5 +51,15 @@ class SettingsService {
     } else {
       await prefs.setString('assigned_technician_name', name);
     }
+  }
+
+  Future<bool> getPushNotificationsEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('push_notifications') ?? true; // Default to true
+  }
+
+  Future<void> setPushNotificationsEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('push_notifications', enabled);
   }
 }

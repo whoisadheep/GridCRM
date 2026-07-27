@@ -82,13 +82,20 @@ def register():
         if not name or not pin:
             return jsonify({"error": "Name and PIN required"}), 400
             
+        phone = data.get('phone', '')
+        email = data.get('email', '')
+        specialty = data.get('specialty', '')
+        
         existing = db.collection('technicians').where('name', '==', name).get()
         if existing:
             return jsonify({"error": "Technician name already exists"}), 409
             
         db.collection('technicians').add({
             'name': name,
-            'pin': pin
+            'pin': pin,
+            'phone': phone,
+            'email': email,
+            'specialty': specialty
         })
         return jsonify({"success": True, "message": "Technician account created"}), 201
         

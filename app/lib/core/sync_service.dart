@@ -39,7 +39,7 @@ class SyncService {
 
   SettingsService get _settings => ref.read(settingsProvider);
 
-  Future<void> initPushNotifications() async {
+  Future<void> enablePushNotifications() async {
     final role = await _settings.getRole();
     if (role != 'technician') return;
 
@@ -59,6 +59,20 @@ class SyncService {
         }
       }
     }
+  }
+
+  Future<void> disablePushNotifications() async {
+    final role = await _settings.getRole();
+    if (role != 'technician') return;
+
+    final techName = await _settings.getAssignedTechnician();
+    if (techName == null || techName.isEmpty) return;
+
+    final snapshot = await _firestore.collection('technicians').where('name', isEqualTo: techName).get();
+    if (snapshot.docs.isNotEmpty) {
+      await snapshot.docs.first.reference.update({'fcm_token': FieldValue.delete()});
+    }
+    await FirebaseMessaging.instance.deleteToken();
   }
 
   Stream<List<Call>> streamCalls() async* {
@@ -96,7 +110,7 @@ class SyncService {
     });
   }
 
-  Future<bool> addTechnician(String name, String pin) async {
+  Future<bool> addTechnician(String name, String pin, {String phone = '', String email = '', String specialty = ''}) async {
     try {
       final existing = await _firestore.collection('technicians').where('name', isEqualTo: name).get();
       if (existing.docs.isNotEmpty) return false;
@@ -104,12 +118,36 @@ class SyncService {
       await _firestore.collection('technicians').add({
         'name': name,
         'pin': pin,
+        'phone': phone,
+        'email': email,
+        'specialty': specialty,
         'created_at': FieldValue.serverTimestamp(),
       });
       return true;
     } catch (e) {
       print('Add technician error: $e');
       rethrow;
+    }
+  }
+
+  Future<bool> updateTechnician(String id, String name, String pin, {String phone = '', String email = '', String specialty = ''}) async {
+    try {
+      final existing = await _firestore.collection('technicians').where('name', isEqualTo: name).get();
+      if (existing.docs.isNotEmpty && existing.docs.first.id != id) {
+        return false; // Name already taken by another technician
+      }
+
+      await _firestore.collection('technicians').doc(id).update({
+        'name': name,
+        'pin': pin,
+        'phone': phone,
+        'email': email,
+        'specialty': specialty,
+      });
+      return true;
+    } catch (e) {
+      print('Update technician error: $e');
+      return false;
     }
   }
 
@@ -175,6 +213,8 @@ class SyncService {
       if (payload['status'] != null) updateData['status'] = payload['status'];
       if (payload['priority'] != null) updateData['priority'] = payload['priority'];
       if (payload['technician_assigned'] != null) updateData['technician_assigned'] = payload['technician_assigned'];
+      if (payload['call_type'] != null) updateData['call_type'] = payload['call_type'];
+      if (payload['problem_description'] != null) updateData['problem_description'] = payload['problem_description'];
 
       final newUpdate = {
         'note': payload['note'] ?? 'Updated',
@@ -185,6 +225,13 @@ class SyncService {
       await _firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(docRef);
         if (!snapshot.exists) throw Exception("Call does not exist!");
+        
+        if (payload['customer_name'] != null || payload['phone_number'] != null) {
+          updateData['customer'] = {
+            'name': payload['customer_name'] ?? snapshot.data()?['customer']?['name'],
+            'phone': payload['phone_number'] ?? snapshot.data()?['customer']?['phone'],
+          };
+        }
         
         final existingUpdates = List.from(snapshot.data()?['updates'] ?? []);
         existingUpdates.insert(0, newUpdate); // Add to top

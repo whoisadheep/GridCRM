@@ -6,8 +6,9 @@ import 'call_detail_screen.dart';
 
 class ConfirmScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> initialData;
+  final String? callId;
 
-  const ConfirmScreen({super.key, required this.initialData});
+  const ConfirmScreen({super.key, required this.initialData, this.callId});
 
   @override
   ConsumerState<ConfirmScreen> createState() => _ConfirmScreenState();
@@ -59,19 +60,28 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
       'problem_description': _problemCtrl.text,
       'technician_assigned': _selectedTech,
       'raw_input': widget.initialData['raw_input'] ?? '',
+      'note': 'Call details updated manually.',
+      'raw_input': widget.initialData['raw_input'] ?? '',
     };
 
     try {
-      final call = await syncService.createCall(payload);
-      if (mounted) {
-        if (call != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => CallDetailScreen(callId: call.id ?? '')),
-          );
-        } else {
-          setState(() => _saving = false);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Save failed (returned null)')));
+      if (widget.callId != null) {
+        await syncService.updateCall(widget.callId!, payload);
+        if (mounted) {
+          Navigator.pop(context); // Go back to detail screen
+        }
+      } else {
+        final call = await syncService.createCall(payload);
+        if (mounted) {
+          if (call != null) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => CallDetailScreen(callId: call.id ?? '')),
+            );
+          } else {
+            setState(() => _saving = false);
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Save failed (returned null)')));
+          }
         }
       }
     } catch (e) {
@@ -120,7 +130,7 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
     final uniqueCustomers = customers.entries.map((e) => {'name': e.key, 'phone': e.value}).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Confirm Details', style: TextStyle(fontWeight: FontWeight.bold))),
+      appBar: AppBar(title: Text(widget.callId != null ? 'Edit Details' : 'Confirm Details', style: const TextStyle(fontWeight: FontWeight.bold))),
       body: _saving 
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
