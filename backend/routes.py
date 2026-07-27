@@ -17,8 +17,16 @@ def login():
     if role == 'admin':
         username = data.get('username')
         password = data.get('password')
-        # Hardcoded admin for demo, ideally use Firebase Auth
-        if username == 'admin' and password == 'admin':
+        if not username or not password:
+            return jsonify({"error": "Username and password required"}), 400
+            
+        if not firebase_admin._apps:
+            return jsonify({"error": "Firebase not initialized"}), 500
+            
+        db = firestore.client()
+        admins = db.collection('admins').where('username', '==', username).where('password', '==', password).get()
+        
+        if admins:
             return jsonify({"success": True, "role": "admin"}), 200
         else:
             return jsonify({"error": "Invalid admin credentials"}), 401
@@ -41,6 +49,49 @@ def login():
         else:
             return jsonify({"error": "Invalid technician credentials"}), 401
             
+    return jsonify({"error": "Invalid role"}), 400
+
+@api_bp.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    if not data or 'role' not in data:
+        return jsonify({"error": "Missing registration details"}), 400
+        
+    role = data['role']
+    db = firestore.client()
+    
+    if role == 'admin':
+        username = data.get('username')
+        password = data.get('password')
+        if not username or not password:
+            return jsonify({"error": "Username and password required"}), 400
+            
+        existing = db.collection('admins').where('username', '==', username).get()
+        if existing:
+            return jsonify({"error": "Admin username already exists"}), 409
+            
+        db.collection('admins').add({
+            'username': username,
+            'password': password
+        })
+        return jsonify({"success": True, "message": "Admin account created"}), 201
+        
+    elif role == 'technician':
+        name = data.get('name')
+        pin = data.get('pin')
+        if not name or not pin:
+            return jsonify({"error": "Name and PIN required"}), 400
+            
+        existing = db.collection('technicians').where('name', '==', name).get()
+        if existing:
+            return jsonify({"error": "Technician name already exists"}), 409
+            
+        db.collection('technicians').add({
+            'name': name,
+            'pin': pin
+        })
+        return jsonify({"success": True, "message": "Technician account created"}), 201
+        
     return jsonify({"error": "Invalid role"}), 400
 
 @api_bp.route('/calls/extract', methods=['POST'])

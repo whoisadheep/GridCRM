@@ -20,8 +20,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _nameController = TextEditingController();
   final _pinController = TextEditingController();
   bool _isLoading = false;
+  bool _isSignUp = false;
 
-  Future<void> _login() async {
+  Future<void> _authenticate() async {
     setState(() => _isLoading = true);
     try {
       final settings = ref.read(settingsProvider);
@@ -39,15 +40,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         body['pin'] = _pinController.text;
       }
 
+      final endpoint = _isSignUp ? '/register' : '/login';
       final response = await http.post(
-        Uri.parse('$baseUrl/login'),
+        Uri.parse('$baseUrl$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         
+        if (_isSignUp) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Account created! Please log in.')),
+            );
+            setState(() => _isSignUp = false);
+          }
+          return;
+        }
+
         await settings.setLoggedIn(true);
         await settings.setRole(data['role']);
         if (data['role'] == 'technician') {
@@ -195,25 +207,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 32),
                 _isLoading
                     ? const CircularProgressIndicator()
-                    : GestureDetector(
-                        onTap: _login,
-                        child: ClayContainer(
-                          color: Colors.blueAccent,
-                          borderRadius: 12,
-                          depth: 20,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                            child: Text(
-                              'Login',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                    : SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
+                          onPressed: _authenticate,
+                          child: Text(_isSignUp ? 'Create Account' : 'Login', style: const TextStyle(fontSize: 18, color: Colors.white)),
                         ),
                       ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => setState(() => _isSignUp = !_isSignUp),
+                  child: Text(_isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign Up"),
+                ),
               ],
             ),
           ),
