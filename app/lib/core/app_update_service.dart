@@ -66,9 +66,9 @@ class AppUpdateService {
 
   Future<AppUpdateInfo?> checkUpdate() async {
     try {
-      final baseUrl = await SettingsService.getBackendUrl();
+      final baseUrl = await SettingsService().getBaseUrl();
       final response = await http.get(
-        Uri.parse('$baseUrl/api/app/version'),
+        Uri.parse('$baseUrl/app/version'),
       ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
