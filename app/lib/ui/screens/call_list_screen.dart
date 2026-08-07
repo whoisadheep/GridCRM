@@ -9,6 +9,8 @@ import 'dashboard_screen.dart';
 import 'settings_screen.dart';
 import 'call_detail_screen.dart';
 import '../widgets/assistant_sheet.dart';
+import '../widgets/trial_banner.dart';
+import '../widgets/upgrade_dialog.dart';
 
 class CallListScreen extends ConsumerStatefulWidget {
   const CallListScreen({super.key});
@@ -190,6 +192,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
           bottom: false,
           child: Column(
             children: [
+              const TrialBanner(),
               // Search & Filter Bar
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -550,10 +553,18 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
       ),
       floatingActionButton: (isSelectionMode || _role == 'technician') ? null : GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const QuickCreateScreen()),
-          );
+          final trialStatus = ref.read(trialStatusProvider);
+          if (trialStatus.isExpired) {
+            showDialog(
+              context: context,
+              builder: (_) => const UpgradeDialog(),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const QuickCreateScreen()),
+            );
+          }
         },
         child: Container(
           height: 64,

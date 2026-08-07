@@ -6,6 +6,8 @@ import firebase_admin
 
 api_bp = Blueprint('api', __name__)
 
+TRIAL_DAYS = 3
+
 @api_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -27,7 +29,18 @@ def login():
         admins = db.collection('admins').where('username', '==', username).where('password', '==', password).get()
         
         if admins:
-            return jsonify({"success": True, "role": "admin"}), 200
+            admin_doc = admins[0]
+            admin_data = admin_doc.to_dict()
+            created_at = admin_data.get('created_at', datetime.datetime.now(datetime.timezone.utc).isoformat())
+            is_subscribed = admin_data.get('is_subscribed', False)
+            return jsonify({
+                "success": True,
+                "role": "admin",
+                "username": username,
+                "created_at": created_at,
+                "is_subscribed": is_subscribed,
+                "trial_days": TRIAL_DAYS
+            }), 200
         else:
             return jsonify({"error": "Invalid admin credentials"}), 401
             
@@ -45,7 +58,18 @@ def login():
         techs = db.collection('technicians').where('name', '==', name).where('pin', '==', pin).get()
         
         if techs:
-            return jsonify({"success": True, "role": "technician", "technician_name": name}), 200
+            tech_doc = techs[0]
+            tech_data = tech_doc.to_dict()
+            created_at = tech_data.get('created_at', datetime.datetime.now(datetime.timezone.utc).isoformat())
+            is_subscribed = tech_data.get('is_subscribed', False)
+            return jsonify({
+                "success": True,
+                "role": "technician",
+                "technician_name": name,
+                "created_at": created_at,
+                "is_subscribed": is_subscribed,
+                "trial_days": TRIAL_DAYS
+            }), 200
         else:
             return jsonify({"error": "Invalid technician credentials"}), 401
             
@@ -59,6 +83,7 @@ def register():
         
     role = data['role']
     db = firestore.client()
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
     
     if role == 'admin':
         username = data.get('username', '').strip() if data.get('username') else None
@@ -72,9 +97,16 @@ def register():
             
         db.collection('admins').add({
             'username': username,
-            'password': password
+            'password': password,
+            'created_at': now_iso,
+            'is_subscribed': False
         })
-        return jsonify({"success": True, "message": "Admin account created"}), 201
+        return jsonify({
+            "success": True,
+            "message": "Admin account created",
+            "created_at": now_iso,
+            "trial_days": TRIAL_DAYS
+        }), 201
         
     elif role == 'technician':
         name = data.get('name', '').strip() if data.get('name') else None
@@ -95,11 +127,67 @@ def register():
             'pin': pin,
             'phone': phone,
             'email': email,
-            'specialty': specialty
+            'specialty': specialty,
+            'created_at': now_iso,
+            'is_subscribed': False
         })
-        return jsonify({"success": True, "message": "Technician account created"}), 201
+        return jsonify({
+            "success": True,
+            "message": "Technician account created",
+            "created_at": now_iso,
+            "trial_days": TRIAL_DAYS
+        }), 201
         
     return jsonify({"error": "Invalid role"}), 400
+
+@api_bp.route('/subscription/status', methods=['GET'])
+def subscription_status():
+    username = request.args.get('username')
+    role = request.args.get('role', 'admin')
+    
+    if not firebase_admin._apps:
+        return jsonify({"error": "Firebase not initialized"}), 500
+        
+    db = firestore.client()
+    collection = 'admins' if role == 'admin' else 'technicians'
+    field = 'username' if role == 'admin' else 'name'
+    
+    if not username:
+        return jsonify({"trial_days": TRIAL_DAYS, "is_subscribed": False}), 200
+        
+    docs = db.collection(collection).where(field, '==', username).get()
+    if docs:
+        d = docs[0].to_dict()
+        created_at_str = d.get('created_at')
+        is_sub = d.get('is_subscribed', False)
+        return jsonify({
+            "trial_days": TRIAL_DAYS,
+            "created_at": created_at_str,
+            "is_subscribed": is_sub
+        }), 200
+        
+    return jsonify({"trial_days": TRIAL_DAYS, "is_subscribed": False}), 200
+
+@api_bp.route('/subscription/upgrade', methods=['POST'])
+def subscription_upgrade():
+    data = request.get_json() or {}
+    username = data.get('username')
+    role = data.get('role', 'admin')
+    
+    if not firebase_admin._apps:
+        return jsonify({"error": "Firebase not initialized"}), 500
+        
+    db = firestore.client()
+    collection = 'admins' if role == 'admin' else 'technicians'
+    field = 'username' if role == 'admin' else 'name'
+    
+    if username:
+        docs = db.collection(collection).where(field, '==', username).get()
+        if docs:
+            docs[0].reference.update({'is_subscribed': True})
+            
+    return jsonify({"success": True, "message": "Successfully upgraded to Pro subscription!", "is_subscribed": True}), 200
+
 
 @api_bp.route('/calls/extract', methods=['POST'])
 def extract_call():
