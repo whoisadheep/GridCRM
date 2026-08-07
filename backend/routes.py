@@ -8,6 +8,27 @@ api_bp = Blueprint('api', __name__)
 
 TRIAL_DAYS = 3
 
+def get_or_create_user_trial(doc_ref, doc_data):
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    updates = {}
+    
+    created_at = doc_data.get('created_at')
+    if not created_at:
+        created_at = now_iso
+        updates['created_at'] = now_iso
+        
+    if 'is_subscribed' not in doc_data:
+        updates['is_subscribed'] = False
+        
+    if updates and doc_ref:
+        try:
+            doc_ref.update(updates)
+        except Exception as e:
+            print(f"Error updating user trial fields: {e}")
+            
+    is_subscribed = doc_data.get('is_subscribed', False) if 'is_subscribed' in doc_data else False
+    return created_at, is_subscribed
+
 @api_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -31,8 +52,7 @@ def login():
         if admins:
             admin_doc = admins[0]
             admin_data = admin_doc.to_dict()
-            created_at = admin_data.get('created_at', datetime.datetime.now(datetime.timezone.utc).isoformat())
-            is_subscribed = admin_data.get('is_subscribed', False)
+            created_at, is_subscribed = get_or_create_user_trial(admin_doc.reference, admin_data)
             return jsonify({
                 "success": True,
                 "role": "admin",
@@ -60,8 +80,7 @@ def login():
         if techs:
             tech_doc = techs[0]
             tech_data = tech_doc.to_dict()
-            created_at = tech_data.get('created_at', datetime.datetime.now(datetime.timezone.utc).isoformat())
-            is_subscribed = tech_data.get('is_subscribed', False)
+            created_at, is_subscribed = get_or_create_user_trial(tech_doc.reference, tech_data)
             return jsonify({
                 "success": True,
                 "role": "technician",
@@ -157,9 +176,9 @@ def subscription_status():
         
     docs = db.collection(collection).where(field, '==', username).get()
     if docs:
-        d = docs[0].to_dict()
-        created_at_str = d.get('created_at')
-        is_sub = d.get('is_subscribed', False)
+        user_doc = docs[0]
+        d = user_doc.to_dict()
+        created_at_str, is_sub = get_or_create_user_trial(user_doc.reference, d)
         return jsonify({
             "trial_days": TRIAL_DAYS,
             "created_at": created_at_str,
