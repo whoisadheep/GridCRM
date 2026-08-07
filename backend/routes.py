@@ -478,3 +478,15 @@ def notify_technician_internal(tech_name, title, body):
             messaging.send(msg)
         except Exception as e:
             print(f"Error sending push: {e}")
+
+@api_bp.route('/app/version', methods=['GET'])
+def app_version():
+    """Returns the latest app version and update URL for in-app updates."""
+    return jsonify({
+        "latest_version": "1.0.0",
+        "min_required_version": "1.0.0",
+        "update_url": "https://github.com/whoisadheep/GridCRM/releases/latest",
+        "release_notes": "Bug fixes and performance improvements.",
+        "force_update": False
+    }), 200
+

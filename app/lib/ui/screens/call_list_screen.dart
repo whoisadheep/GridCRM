@@ -11,6 +11,7 @@ import 'call_detail_screen.dart';
 import '../widgets/assistant_sheet.dart';
 import '../widgets/trial_banner.dart';
 import '../widgets/upgrade_dialog.dart';
+import '../../core/app_update_service.dart';
 
 class CallListScreen extends ConsumerStatefulWidget {
   const CallListScreen({super.key});
@@ -30,11 +31,12 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
   void initState() {
     super.initState();
     _loadRole();
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final role = ref.read(roleProvider);
       if (role == 'technician') {
         ref.read(syncServiceProvider).enablePushNotifications();
       }
+      ref.read(appUpdateServiceProvider).checkAndShowUpdateModal(context);
     });
   }
 

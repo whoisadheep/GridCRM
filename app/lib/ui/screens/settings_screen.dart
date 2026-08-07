@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clay_containers/clay_containers.dart';
 import '../../core/settings.dart';
 import '../../core/sync_service.dart';
+import '../../core/app_update_service.dart';
 import 'login_screen.dart';
 import 'technician_profile_screen.dart';
 import '../widgets/assistant_sheet.dart';
@@ -277,6 +278,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ],
                 ),
               );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildSettingsTile(
+            icon: Icons.system_update,
+            title: 'Check for Updates',
+            onTap: () {
+              ref.read(appUpdateServiceProvider).checkAndShowUpdateModal(context, showToastIfLatest: true);
             },
           ),
           const SizedBox(height: 32),
