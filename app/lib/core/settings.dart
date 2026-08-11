@@ -90,9 +90,24 @@ class SettingsService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('is_logged_in', false);
     await prefs.remove('role');
+    await prefs.remove('username');
     await prefs.remove('assigned_technician_name');
     await prefs.remove('trial_start_date');
     await prefs.remove('is_pro_subscribed');
+  }
+
+  Future<String?> getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('username');
+    if (name != null && name.isNotEmpty) return name;
+    final role = await getRole();
+    if (role == 'technician') return await getAssignedTechnician();
+    return FirebaseAuth.instance.currentUser?.uid;
+  }
+
+  Future<void> setUsername(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', name);
   }
 
   Future<String> getRole() async {
@@ -159,8 +174,10 @@ class SettingsService {
     final isSub = await isProSubscribed();
     if (isSub) return totalTrialDays;
     final startDate = await getTrialStartDate();
-    final difference = DateTime.now().difference(startDate).inDays;
-    final remaining = totalTrialDays - difference;
+    final differenceInHours = DateTime.now().difference(startDate).inHours;
+    final daysPassed = (differenceInHours / 24.0).floor();
+    final remaining = totalTrialDays - daysPassed;
+    if (remaining > totalTrialDays) return totalTrialDays;
     return remaining < 0 ? 0 : remaining;
   }
 

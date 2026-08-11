@@ -106,6 +106,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(userProfileStreamProvider);
     var calls = ref.watch(callsProvider);
     
     // Apply Filters

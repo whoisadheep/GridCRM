@@ -34,6 +34,12 @@ final techniciansProvider = StreamProvider.autoDispose<List<Map<String, dynamic>
   return syncService.streamTechnicians();
 });
 
+final userProfileStreamProvider = StreamProvider.autoDispose<Map<String, dynamic>?>((ref) {
+  ref.watch(authStateProvider);
+  final syncService = ref.watch(syncServiceProvider);
+  return syncService.streamUserProfile();
+});
+
 class SyncService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Ref ref;
@@ -119,6 +125,43 @@ class SyncService {
     }).handleError((error) {
       print('Technicians stream error: $error');
       return <Map<String, dynamic>>[];
+    });
+  }
+
+  Stream<Map<String, dynamic>?> streamUserProfile() async* {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      yield null;
+      return;
+    }
+    final role = await _settings.getRole();
+    final username = await _settings.getUsername() ?? uid;
+
+    final collection = role == 'admin' ? 'admins' : 'technicians';
+    final field = role == 'admin' ? 'username' : 'name';
+
+    yield* _firestore
+        .collection(collection)
+        .where(field, isEqualTo: username)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isEmpty) return null;
+      final data = snapshot.docs.first.data();
+      
+      final isSub = data['is_subscribed'] == true;
+      _settings.setProSubscribed(isSub);
+
+      if (data['created_at'] != null) {
+        final dt = DateTime.tryParse(data['created_at'].toString());
+        if (dt != null) {
+          _settings.setTrialStartDate(dt);
+        }
+      }
+      ref.read(trialStatusProvider.notifier).refresh();
+      return data;
+    }).handleError((e) {
+      print('User profile stream error: $e');
+      return null;
     });
   }
 

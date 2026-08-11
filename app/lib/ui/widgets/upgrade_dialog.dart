@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/settings.dart';
 
 class UpgradeDialog extends ConsumerStatefulWidget {
@@ -37,7 +38,7 @@ class _UpgradeDialogState extends ConsumerState<UpgradeDialog>
       final settings = ref.read(settingsProvider);
       final baseUrl = await settings.getBaseUrl();
       final role = await settings.getRole();
-      final username = await settings.getAssignedTechnician() ?? 'admin';
+      final username = await settings.getUsername() ?? FirebaseAuth.instance.currentUser?.uid ?? 'Rudra';
 
       final response = await http.get(
         Uri.parse('$baseUrl/subscription/status?username=$username&role=$role'),

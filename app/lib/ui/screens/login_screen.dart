@@ -70,10 +70,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await settings.setLoggedIn(true);
         await settings.setRole(data['role']);
         ref.read(roleProvider.notifier).state = data['role'];
+        
+        final uname = data['username'] ?? data['technician_name'] ?? _usernameController.text;
+        if (uname.isNotEmpty) {
+          await settings.setUsername(uname);
+        }
         if (data['role'] == 'technician') {
           await settings.setAssignedTechnician(data['technician_name']);
         }
-        
+
+        // Sync subscription state & trial date from backend login response
+        final isSubscribed = data['is_subscribed'] == true;
+        await settings.setProSubscribed(isSubscribed);
+
+        if (data['created_at'] != null) {
+          final dt = DateTime.tryParse(data['created_at'].toString());
+          if (dt != null) {
+            await settings.setTrialStartDate(dt);
+          }
+        }
+        await ref.read(trialStatusProvider.notifier).refresh();
+
         ref.invalidate(callsStreamProvider);
         ref.invalidate(callsProvider);
         ref.invalidate(techniciansProvider);
