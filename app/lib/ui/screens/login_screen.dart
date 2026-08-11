@@ -116,6 +116,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  void _toggleSignUp() {
+    setState(() {
+      _isSignUp = !_isSignUp;
+      if (_isSignUp) {
+        _isAdmin = true;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
@@ -137,28 +146,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: const Icon(Icons.grid_on, size: 50, color: Colors.blueAccent),
                 ),
                 const SizedBox(height: 32),
-                const Text(
-                  'Grid CRM',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
+                
+                if (_isSignUp) ...[
+                  const Text(
+                    'Start Your Free Trial',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Create an admin account to get full access free for 3 days.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  ),
+                ] else ...[
+                  const Text(
+                    'Grid CRM',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                ],
+                
                 const SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ChoiceChip(
-                      label: const Text('Admin'),
-                      selected: _isAdmin,
-                      onSelected: (val) => setState(() => _isAdmin = true),
-                    ),
-                    const SizedBox(width: 16),
-                    ChoiceChip(
-                      label: const Text('Technician'),
-                      selected: !_isAdmin,
-                      onSelected: (val) => setState(() => _isAdmin = false),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
+                
+                if (!_isSignUp) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ChoiceChip(
+                        label: const Text('Admin'),
+                        selected: _isAdmin,
+                        onSelected: (val) => setState(() => _isAdmin = true),
+                      ),
+                      const SizedBox(width: 16),
+                      ChoiceChip(
+                        label: const Text('Technician'),
+                        selected: !_isAdmin,
+                        onSelected: (val) => setState(() => _isAdmin = false),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                ],
                 
                 if (_isAdmin) ...[
                   ClayContainer(
@@ -241,17 +268,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
+                            backgroundColor: _isSignUp ? Colors.green : Colors.blueAccent,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           onPressed: _authenticate,
-                          child: Text(_isSignUp ? 'Create Account' : 'Login', style: const TextStyle(fontSize: 18, color: Colors.white)),
+                          child: Text(
+                            _isSignUp ? 'Start 3-Day Free Trial' : 'Login', 
+                            style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)
+                          ),
                         ),
                       ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () => setState(() => _isSignUp = !_isSignUp),
-                  child: Text(_isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign Up"),
+                  onPressed: _toggleSignUp,
+                  child: Text(
+                    _isSignUp ? 'Already have an account? Log in' : "Don't have an account? Start Free Trial",
+                    style: TextStyle(
+                      color: _isSignUp ? Colors.grey[700] : Colors.blueAccent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
