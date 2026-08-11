@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:clay_containers/clay_containers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/sync_service.dart';
 import '../../core/settings.dart';
 
@@ -68,7 +69,10 @@ class _AssistantSheetState extends ConsumerState<AssistantSheet> {
       final response = await http.post(
         Uri.parse('$baseUrl/assistant'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'command': _controller.text}),
+        body: jsonEncode({
+          'command': _controller.text,
+          'uid': FirebaseAuth.instance.currentUser?.uid,
+        }),
       );
       
       if (response.statusCode == 200) {

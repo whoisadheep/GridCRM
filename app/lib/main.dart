@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'ui/screens/call_list_screen.dart';
 import 'ui/screens/login_screen.dart';
@@ -38,8 +39,16 @@ class _MyAppState extends ConsumerState<MyApp> {
     final settings = ref.read(settingsProvider);
     final loggedIn = await settings.isLoggedIn();
     if (loggedIn) {
-      final role = await settings.getRole();
-      ref.read(roleProvider.notifier).state = role;
+      if (FirebaseAuth.instance.currentUser == null) {
+        await settings.logout();
+        _isLoggedIn = false;
+      } else {
+        final role = await settings.getRole();
+        ref.read(roleProvider.notifier).state = role;
+        _isLoggedIn = true;
+      }
+    } else {
+      _isLoggedIn = false;
     }
     if (mounted) {
       setState(() {

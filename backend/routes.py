@@ -59,6 +59,7 @@ def login():
                 "username": username,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
+                "custom_token": firebase_admin.auth.create_custom_token(username).decode('utf-8'),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:
@@ -87,6 +88,7 @@ def login():
                 "technician_name": name,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
+                "custom_token": firebase_admin.auth.create_custom_token(name).decode('utf-8'),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:
@@ -264,10 +266,11 @@ def notify_technician():
 @api_bp.route('/assistant', methods=['POST'])
 def assistant_command():
     data = request.get_json()
-    if not data or 'command' not in data:
-        return jsonify({"error": "Missing 'command' in request body"}), 400
+    if not data or 'command' not in data or 'uid' not in data:
+        return jsonify({"error": "Missing 'command' or 'uid' in request body"}), 400
 
     command_text = data['command']
+    uid = data['uid']
     intent = process_command(command_text)
     
     if not intent:
@@ -288,7 +291,7 @@ def assistant_command():
     db = firestore.client()
     
     if action == "get_technicians":
-        techs = db.collection('technicians').get()
+        techs = db.collection('technicians').where('ownerId', '==', uid).get()
         names = [t.to_dict().get('name') for t in techs]
         if names:
             return jsonify({"message": f"The current technicians are: {', '.join(names)}."}), 200
@@ -305,7 +308,7 @@ def assistant_command():
         phone = params.get("phone", "")
         
         db.collection('technicians').add({
-            'name': tech_name, 'pin': pin, 'specialty': spec, 'phone': phone, 'email': '',
+            'ownerId': uid, 'name': tech_name, 'pin': pin, 'specialty': spec, 'phone': phone, 'email': '',
             'created_at': firestore.SERVER_TIMESTAMP
         })
         return jsonify({"message": f"Successfully added {tech_name} as a technician."}), 200
@@ -313,7 +316,7 @@ def assistant_command():
     elif action == "delete_technician":
         if not target_name:
             return jsonify({"error": "I need to know who to delete."}), 400
-        techs = db.collection('technicians').where('name', '==', target_name).get()
+        techs = db.collection('technicians').where('ownerId', '==', uid).where('name', '==', target_name).get()
         if not techs:
             return jsonify({"error": f"Technician {target_name} not found."}), 404
         for t in techs:
@@ -323,7 +326,7 @@ def assistant_command():
     elif action == "update_technician":
         if not target_name:
             return jsonify({"error": "I need to know who to update."}), 400
-        techs = db.collection('technicians').where('name', '==', target_name).get()
+        techs = db.collection('technicians').where('ownerId', '==', uid).where('name', '==', target_name).get()
         if not techs:
             return jsonify({"error": f"Technician {target_name} not found."}), 404
         updates = {}
@@ -337,7 +340,7 @@ def assistant_command():
     elif action == "delete_call":
         if not target_name:
             return jsonify({"error": "I need the customer name to delete their call."}), 400
-        all_calls = db.collection('calls').get()
+        all_calls = db.collection('calls').where('ownerId', '==', uid).get()
         call_doc = next((c for c in all_calls if c.to_dict().get('customer', {}).get('name') and target_name.lower() in c.to_dict().get('customer', {}).get('name', '').lower()), None)
         if not call_doc:
             return jsonify({"error": f"No calls found for {target_name}."}), 404
@@ -345,7 +348,7 @@ def assistant_command():
         return jsonify({"message": f"Successfully deleted the call for {target_name}."}), 200
 
     elif action == "get_calls":
-        calls = db.collection('calls').where('status', '==', 'Pending').get()
+        calls = db.collection('calls').where('ownerId', '==', uid).where('status', '==', 'Pending').get()
         if not calls:
             return jsonify({"message": "There are currently no pending calls."}), 200
         return jsonify({"message": f"There are {len(calls)} pending calls currently in the system."}), 200
@@ -357,7 +360,7 @@ def assistant_command():
         
         # Find or create customer
         customers_ref = db.collection('customers')
-        query = customers_ref.where('phone', '==', phone).get() if phone else None
+        query = customers_ref.where('ownerId', '==', uid).where('phone', '==', phone).get() if phone else None
         
         if query:
             customer_doc = query[0]
@@ -366,6 +369,7 @@ def assistant_command():
         else:
             # Create new customer
             _, new_customer_ref = customers_ref.add({
+                'ownerId': uid,
                 'name': c_name,
                 'phone': phone or '',
                 'address': '',
@@ -376,6 +380,7 @@ def assistant_command():
             
         new_call_ref = db.collection('calls').document()
         call_data = {
+            'ownerId': uid,
             'customer_id': customer_id,
             'customer': {
                 'name': customer_data.get('name', 'Unknown'),
@@ -393,6 +398,7 @@ def assistant_command():
         new_call_ref.set(call_data)
         
         db.collection('call_updates').add({
+            'ownerId': uid,
             'call_id': new_call_ref.id,
             'note': "AI Assistant: Call created.",
             'status_change': call_data['status'],
@@ -407,7 +413,7 @@ def assistant_command():
         if not target_name:
             return jsonify({"error": "Could not identify which customer to update."}), 400
             
-        all_calls = db.collection('calls').order_by('created_at', direction=firestore.Query.DESCENDING).get()
+        all_calls = db.collection('calls').where('ownerId', '==', uid).order_by('created_at', direction=firestore.Query.DESCENDING).get()
         call_doc = None
         matched_customer_name = None
         
@@ -448,6 +454,7 @@ def assistant_command():
         update_note = "AI Assistant: " + ", ".join(note_parts)
         
         db.collection('call_updates').add({
+            'ownerId': uid,
             'call_id': call_doc.id,
             'note': update_note,
             'status_change': new_status if new_status else None,
@@ -483,10 +490,10 @@ def notify_technician_internal(tech_name, title, body):
 def app_version():
     """Returns the latest app version and update URL for in-app updates."""
     return jsonify({
-        "latest_version": "1.0.0",
+        "latest_version": "1.0.1",
         "min_required_version": "1.0.0",
-        "update_url": "https://github.com/whoisadheep/GridCRM/releases/latest",
-        "release_notes": "Bug fixes and performance improvements.",
-        "force_update": False
+        "update_url": "https://grid-a4798.web.app/app-release.apk",
+        "release_notes": "Security updates and transition to new Auto Updater.",
+        "force_update": True
     }), 200
 

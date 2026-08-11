@@ -66,9 +66,9 @@ class AppUpdateService {
 
   Future<AppUpdateInfo?> checkUpdate() async {
     try {
-      final baseUrl = await SettingsService().getBaseUrl();
+      // Fetching from Firebase Hosting instead of the python backend
       final response = await http.get(
-        Uri.parse('$baseUrl/app/version'),
+        Uri.parse('https://grid-a4798.web.app/version.json'),
       ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {

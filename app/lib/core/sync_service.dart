@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 import 'settings.dart';
@@ -53,7 +54,8 @@ class SyncService {
       String? token = await messaging.getToken();
       if (token != null) {
         // Query tech and update their token
-        final snapshot = await _firestore.collection('technicians').where('name', isEqualTo: techName).get();
+        final uid = FirebaseAuth.instance.currentUser?.uid;
+        final snapshot = await _firestore.collection('technicians').where('ownerId', isEqualTo: uid).where('name', isEqualTo: techName).get();
         if (snapshot.docs.isNotEmpty) {
           await snapshot.docs.first.reference.update({'fcm_token': token});
         }
@@ -68,7 +70,8 @@ class SyncService {
     final techName = await _settings.getAssignedTechnician();
     if (techName == null || techName.isEmpty) return;
 
-    final snapshot = await _firestore.collection('technicians').where('name', isEqualTo: techName).get();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final snapshot = await _firestore.collection('technicians').where('ownerId', isEqualTo: uid).where('name', isEqualTo: techName).get();
     if (snapshot.docs.isNotEmpty) {
       await snapshot.docs.first.reference.update({'fcm_token': FieldValue.delete()});
     }
@@ -77,7 +80,8 @@ class SyncService {
 
   Stream<List<Call>> streamCalls() async* {
     final role = await _settings.getRole();
-    Query query = _firestore.collection('calls').orderBy('created_at', descending: true);
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    Query query = _firestore.collection('calls').where('ownerId', isEqualTo: uid).orderBy('created_at', descending: true);
 
     if (role == 'technician') {
       final techName = await _settings.getAssignedTechnician();
@@ -98,7 +102,8 @@ class SyncService {
   }
 
   Stream<List<Map<String, dynamic>>> streamTechnicians() {
-    return _firestore.collection('technicians').orderBy('name').snapshots().map((snapshot) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    return _firestore.collection('technicians').where('ownerId', isEqualTo: uid).orderBy('name').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data();
         data['id'] = doc.id;
@@ -112,10 +117,12 @@ class SyncService {
 
   Future<bool> addTechnician(String name, String pin, {String phone = '', String email = '', String specialty = ''}) async {
     try {
-      final existing = await _firestore.collection('technicians').where('name', isEqualTo: name).get();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final existing = await _firestore.collection('technicians').where('ownerId', isEqualTo: uid).where('name', isEqualTo: name).get();
       if (existing.docs.isNotEmpty) return false;
 
       await _firestore.collection('technicians').add({
+        'ownerId': uid,
         'name': name,
         'pin': pin,
         'phone': phone,
@@ -132,7 +139,8 @@ class SyncService {
 
   Future<bool> updateTechnician(String id, String name, String pin, {String phone = '', String email = '', String specialty = ''}) async {
     try {
-      final existing = await _firestore.collection('technicians').where('name', isEqualTo: name).get();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final existing = await _firestore.collection('technicians').where('ownerId', isEqualTo: uid).where('name', isEqualTo: name).get();
       if (existing.docs.isNotEmpty && existing.docs.first.id != id) {
         return false; // Name already taken by another technician
       }
@@ -170,7 +178,9 @@ class SyncService {
 
   Future<Call?> createCall(Map<String, dynamic> payload) async {
     try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
       final data = {
+        'ownerId': uid,
         'call_type': payload['call_type'] ?? 'Other',
         'problem_description': payload['problem_description'] ?? '',
         'priority': payload['priority'] ?? 'Medium',

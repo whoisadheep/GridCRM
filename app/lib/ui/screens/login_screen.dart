@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/settings.dart';
 import 'call_list_screen.dart';
 
@@ -58,6 +59,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             setState(() => _isSignUp = false);
           }
           return;
+        }
+
+        if (data['custom_token'] != null) {
+          await FirebaseAuth.instance.signInWithCustomToken(data['custom_token']);
         }
 
         await settings.setLoggedIn(true);
