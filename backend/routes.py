@@ -1,7 +1,7 @@
 import datetime
 from flask import Blueprint, request, jsonify
 from utils import extract_call_info, process_command
-from firebase_admin import messaging, firestore
+from firebase_admin import messaging, firestore, auth as fb_auth
 import firebase_admin
 
 api_bp = Blueprint('api', __name__)
@@ -64,7 +64,7 @@ def login():
                 "username": username,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
-                "custom_token": _token_to_str(firebase_admin.auth.create_custom_token(username)),
+                "custom_token": _token_to_str(fb_auth.create_custom_token(username)),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:
@@ -93,7 +93,7 @@ def login():
                 "technician_name": name,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
-                "custom_token": _token_to_str(firebase_admin.auth.create_custom_token(name)),
+                "custom_token": _token_to_str(fb_auth.create_custom_token(name)),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:
