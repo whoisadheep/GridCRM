@@ -65,7 +65,7 @@ class AppUpdateInfo {
 class AppUpdateService {
   Future<AppUpdateInfo?> checkUpdate() async {
     try {
-      String currentVer = "1.0.2";
+      String currentVer = "1.0.4";
       try {
         final packageInfo = await PackageInfo.fromPlatform();
         if (packageInfo.version.isNotEmpty) {
