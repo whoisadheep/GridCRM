@@ -9,8 +9,13 @@ venv/
 *.db
 *.sqlite3
 
-# Firebase
+# Firebase & Secrets
 firebase-admin.json
+*-firebase-adminsdk-*.json
+*service-account*.json
+grid-*.json
+*.pem
+*.key
 
 # Flutter/Dart
 .dart_tool/
