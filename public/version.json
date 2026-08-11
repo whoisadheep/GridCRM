@@ -1,7 +1,7 @@
 {
-  "latest_version": "1.0.3",
+  "latest_version": "1.0.4",
   "min_required_version": "1.0.0",
   "update_url": "https://github.com/whoisadheep/GridCRM/releases/latest/download/app-release.apk",
-  "release_notes": "Multi-tenant auth isolation, smooth account switching, dynamic version checking, and update screen minimize feature.",
+  "release_notes": "Redesigned Sign Up page, real-time subscription status sync, and exact trial countdown.",
   "force_update": false
 }
