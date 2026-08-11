@@ -62,7 +62,7 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
-  static const String currentInstalledVersion = "1.0.0";
+  static const String currentInstalledVersion = "1.0.2";
 
   Future<AppUpdateInfo?> checkUpdate() async {
     try {

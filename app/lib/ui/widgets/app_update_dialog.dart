@@ -53,41 +53,44 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
     final isFailed = downloadState.status == DownloadStatus.failed;
 
     return PopScope(
-      canPop: !widget.updateInfo.forceUpdate && !isDownloading,
+      canPop: !widget.updateInfo.forceUpdate,
       child: Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF1A1A2E),
-                Color(0xFF16213E),
-                Color(0xFF0F3460),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF0F3460).withOpacity(0.5),
-                blurRadius: 30,
-                spreadRadius: 2,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF1A1A2E),
+                    Color(0xFF16213E),
+                    Color(0xFF0F3460),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0F3460).withOpacity(0.5),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Animated icon
-                ScaleTransition(
-                  scale: _pulseAnimation,
-                  child: Container(
-                    width: 80,
+              child: Padding(
+                padding: const EdgeInsets.all(28.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!widget.updateInfo.forceUpdate) const SizedBox(height: 8),
+                    // Animated icon
+                    ScaleTransition(
+                      scale: _pulseAnimation,
+                      child: Container(
+                        width: 80,
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -208,8 +211,20 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
             ),
           ),
         ),
-      ),
-    );
+        if (!widget.updateInfo.forceUpdate)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 22),
+              tooltip: 'Minimize',
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+      ],
+    ),
+  ),
+);
   }
 
   Widget _buildProgressSection(DownloadState state) {
@@ -324,7 +339,7 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
 
     return Row(
       children: [
-        // Later / Cancel button
+        // Minimize / Later button
         if (!widget.updateInfo.forceUpdate || isDownloading)
           Expanded(
             child: TextButton(
@@ -337,15 +352,13 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               onPressed: () {
-                if (isDownloading) {
-                  ref.read(downloadProvider.notifier).cancelDownload();
-                }
-                if (!widget.updateInfo.forceUpdate) {
+                // Minimize dialog (do NOT cancel active download)
+                if (!widget.updateInfo.forceUpdate || isDownloading) {
                   Navigator.pop(context);
                 }
               },
               child: Text(
-                isDownloading ? 'Cancel' : 'Later',
+                isDownloading ? 'Minimize' : 'Later',
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
