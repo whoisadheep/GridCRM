@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/settings.dart';
+import '../../core/sync_service.dart';
 import 'call_list_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
