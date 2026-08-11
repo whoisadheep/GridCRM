@@ -492,7 +492,7 @@ def app_version():
     return jsonify({
         "latest_version": "1.0.1",
         "min_required_version": "1.0.0",
-        "update_url": "https://grid-a4798.web.app/app-release.apk",
+        "update_url": "https://github.com/whoisadheep/GridCRM/releases/latest/download/app-release.apk",
         "release_notes": "Security updates and transition to new Auto Updater.",
         "force_update": True
     }), 200
