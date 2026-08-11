@@ -84,11 +84,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         borderRadius: 16,
         depth: 10,
         child: ListTile(
-          leading: Icon(icon, color: iconColor),
-          title: Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
-          trailing: trailing ?? const Icon(Icons.chevron_right, color: Colors.black38),
-        ),
-      ),
+        leading: Icon(icon, color: iconColor),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+        trailing: trailing ?? const Icon(Icons.chevron_right, color: Colors.black38),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        minLeadingWidth: 24,
+      ),  ),
     );
   }
 
@@ -107,9 +108,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         padding: const EdgeInsets.all(24.0),
         children: [
           const Text('Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           const DownloadProgressBanner(),
-          const SizedBox(height: 16),
           if (_role == 'technician' && _selectedTech != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
@@ -151,21 +151,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Icon(
-                            trialStatus.isSubscribed ? Icons.stars : Icons.timer,
-                            color: trialStatus.isSubscribed ? Colors.amber : (trialStatus.isExpired ? Colors.redAccent : Colors.blueAccent),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            trialStatus.isSubscribed ? 'Grid CRM Pro' : 'Free Trial (3 Days)',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              trialStatus.isSubscribed ? Icons.stars : Icons.timer,
+                              color: trialStatus.isSubscribed ? Colors.amber : (trialStatus.isExpired ? Colors.redAccent : Colors.blueAccent),
+                            ),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                trialStatus.isSubscribed ? 'Grid CRM Pro' : 'Free Trial (3 Days)',
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
@@ -177,7 +182,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: Text(
                           trialStatus.isSubscribed
                               ? 'ACTIVE'
-                              : (trialStatus.isExpired ? 'EXPIRED' : '${trialStatus.daysRemaining}d REMAINING'),
+                              : (trialStatus.isExpired ? 'EXPIRED' : '${trialStatus.daysRemaining}d LEFT'),
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,

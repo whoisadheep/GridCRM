@@ -123,8 +123,9 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
       calls = calls.where((c) => c.status == _statusFilter).toList();
     }
     
-    if (_role == 'technician' && _techName != null) {
-      calls = calls.where((c) => c.technicianAssigned == _techName).toList();
+    if (_role == 'technician' && _techName != null && _techName!.trim().isNotEmpty) {
+      final targetTech = _techName!.trim().toLowerCase();
+      calls = calls.where((c) => (c.technicianAssigned ?? '').trim().toLowerCase() == targetTech).toList();
     }
 
     final isSelectionMode = _selectedIds.isNotEmpty;
@@ -236,8 +237,9 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
                           
                           // Calculate count using the relevant calls
                           var baseCalls = ref.watch(callsProvider);
-                          if (_role == 'technician' && _techName != null) {
-                            baseCalls = baseCalls.where((c) => c.technicianAssigned == _techName).toList();
+                          if (_role == 'technician' && _techName != null && _techName!.trim().isNotEmpty) {
+                            final targetTech = _techName!.trim().toLowerCase();
+                            baseCalls = baseCalls.where((c) => (c.technicianAssigned ?? '').trim().toLowerCase() == targetTech).toList();
                           }
                           final count = status == 'All' 
                               ? baseCalls.length 
@@ -342,7 +344,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: GestureDetector(
                           onLongPress: () {
-                            if (_role == 'admin') {
+                            if (_role != 'technician') {
                               _toggleSelection(callId);
                             }
                           },

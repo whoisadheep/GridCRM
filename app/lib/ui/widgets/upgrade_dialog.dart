@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:clay_containers/clay_containers.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../core/settings.dart';
@@ -12,8 +11,25 @@ class UpgradeDialog extends ConsumerStatefulWidget {
   ConsumerState<UpgradeDialog> createState() => _UpgradeDialogState();
 }
 
-class _UpgradeDialogState extends ConsumerState<UpgradeDialog> {
+class _UpgradeDialogState extends ConsumerState<UpgradeDialog>
+    with SingleTickerProviderStateMixin {
   bool _isChecking = false;
+  late AnimationController _shimmerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
 
   Future<void> _checkActivationStatus() async {
     setState(() => _isChecking = true);
@@ -41,12 +57,14 @@ class _UpgradeDialogState extends ConsumerState<UpgradeDialog> {
                   children: [
                     Icon(Icons.stars, color: Colors.amber),
                     SizedBox(width: 12),
-                    Text('Grid CRM Pro activated from Firebase!', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('Grid CRM Pro activated!',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 backgroundColor: const Color(0xFF1E293B),
                 behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
             );
           }
@@ -57,7 +75,8 @@ class _UpgradeDialogState extends ConsumerState<UpgradeDialog> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Subscription not activated yet in Firebase. Please contact developer.'),
+            content: Text(
+                'Subscription not activated yet. Please contact developer.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -73,26 +92,51 @@ class _UpgradeDialogState extends ConsumerState<UpgradeDialog> {
     }
   }
 
-  Widget _buildFeatureRow(IconData icon, String text) {
+  Widget _buildFeatureRow(IconData icon, String title, String subtitle) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: Colors.blueAccent.withOpacity(0.12),
-              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF6366F1).withOpacity(0.15),
+                  const Color(0xFF8B5CF6).withOpacity(0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.blueAccent, size: 16),
+            child: Icon(icon, color: const Color(0xFF6366F1), size: 20),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.white.withOpacity(0.5),
+                  ),
+                ),
+              ],
             ),
           ),
+          Icon(Icons.check_circle_rounded,
+              color: Colors.greenAccent.withOpacity(0.7), size: 20),
         ],
       ),
     );
@@ -100,131 +144,234 @@ class _UpgradeDialogState extends ConsumerState<UpgradeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = Theme.of(context).scaffoldBackgroundColor;
-
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: ClayContainer(
-        color: baseColor,
-        borderRadius: 28,
-        depth: 25,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF1A1A2E),
+              Color(0xFF16213E),
+              Color(0xFF0F3460),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF6366F1).withOpacity(0.3),
+              blurRadius: 30,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(28.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header Badge
+              // Crown icon
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                width: 72,
+                height: 72,
                 decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
                   ),
-                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    )
+                      color: const Color(0xFF6366F1).withOpacity(0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
                   ],
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: const Icon(
+                  Icons.workspace_premium,
+                  color: Colors.amber,
+                  size: 36,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // PRO badge
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  ),
+                ),
+                child: const Text(
+                  'GRID CRM PRO',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Title
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Colors.white, Color(0xFFA5B4FC)],
+                ).createShader(bounds),
+                child: const Text(
+                  'Unlock Unlimited Power',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                'Contact the developer to activate your Pro subscription.',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.5),
+                  fontSize: 13,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 24),
+
+              // Feature list
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(18),
+                  border:
+                      Border.all(color: Colors.white.withOpacity(0.08)),
+                ),
+                child: Column(
                   children: [
-                    Icon(Icons.workspace_premium, color: Colors.amber, size: 20),
-                    SizedBox(width: 6),
-                    Text(
-                      'GRID CRM PRO',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1.2, fontSize: 12),
+                    _buildFeatureRow(
+                      Icons.auto_awesome,
+                      'AI Call Extraction',
+                      'Unlimited voice-to-text & smart dispatch',
+                    ),
+                    Divider(
+                        color: Colors.white.withOpacity(0.06), height: 1),
+                    _buildFeatureRow(
+                      Icons.notifications_active,
+                      'Push Notifications',
+                      'Instant alerts to technicians in the field',
+                    ),
+                    Divider(
+                        color: Colors.white.withOpacity(0.06), height: 1),
+                    _buildFeatureRow(
+                      Icons.analytics_rounded,
+                      'Analytics Dashboard',
+                      'Real-time insights & customer reports',
+                    ),
+                    Divider(
+                        color: Colors.white.withOpacity(0.06), height: 1),
+                    _buildFeatureRow(
+                      Icons.cloud_sync,
+                      'Unlimited Calls',
+                      'No caps on service calls & technicians',
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              
-              const Text(
-                'Unlock Unlimited Access',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.black87),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Contact developer to activate your full Grid CRM Pro subscription.',
-                style: TextStyle(color: Colors.black54, fontSize: 13),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
 
-              // Feature List
-              _buildFeatureRow(Icons.auto_awesome, 'Unlimited AI Call Extraction & Voice Logs'),
-              _buildFeatureRow(Icons.notifications_active, 'Instant Push Notifications to Technicians'),
-              _buildFeatureRow(Icons.analytics, 'Real-time Analytics & Customer Insights'),
-              _buildFeatureRow(Icons.cloud_sync, 'Unlimited Service Calls & Tech Dispatch'),
+              const SizedBox(height: 24),
 
-              const SizedBox(height: 20),
-
-              // Info Card
-              ClayContainer(
-                color: baseColor,
-                borderRadius: 18,
-                depth: -10,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.contact_support_outlined, color: Color(0xFF4F46E5), size: 20),
-                          SizedBox(width: 8),
-                          Text('Contact Developer', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF4F46E5))),
-                        ],
+              // CTA button
+              _isChecking
+                  ? Container(
+                      width: double.infinity,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white.withOpacity(0.1),
                       ),
-                      const Divider(height: 20),
-                      Row(
-                        children: [
-                          const Icon(Icons.info_outline, color: Colors.blueAccent, size: 18),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Please contact the developer directly. Once activated, tap below to verify status.',
-                              style: TextStyle(color: Colors.grey[700], fontSize: 12, height: 1.3),
-                            ),
+                      child: const Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.cyanAccent,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                const Color(0xFF6366F1).withOpacity(0.4),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Action Buttons
-              _isChecking
-                  ? const CircularProgressIndicator()
-                  : SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton.icon(
+                      child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4F46E5),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          elevation: 4,
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         onPressed: _checkActivationStatus,
-                        icon: const Icon(Icons.sync, color: Colors.white),
-                        label: const Text('Check Activation Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.sync_rounded, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Check Activation Status',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-              
-              const SizedBox(height: 10),
+
+              const SizedBox(height: 12),
+
+              // Close button
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Close', style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Maybe Later',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.4),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
               ),
             ],
           ),

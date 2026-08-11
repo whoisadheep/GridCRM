@@ -62,6 +62,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
 
         if (data['custom_token'] != null) {
+          await FirebaseAuth.instance.signOut();
           await FirebaseAuth.instance.signInWithCustomToken(data['custom_token']);
         }
 

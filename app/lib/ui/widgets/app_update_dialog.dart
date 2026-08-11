@@ -400,34 +400,37 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
                         Navigator.pop(context);
                       }
                     },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (isDownloading) ...[
-                    const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white54,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (isDownloading) ...[
+                      const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white54,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text('Downloading...', style: TextStyle(fontWeight: FontWeight.w700)),
-                  ] else if (isCompleted) ...[
-                    const Icon(Icons.install_mobile_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    const Text('Install Now', style: TextStyle(fontWeight: FontWeight.w700)),
-                  ] else if (isFailed) ...[
-                    const Icon(Icons.refresh_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    const Text('Retry', style: TextStyle(fontWeight: FontWeight.w700)),
-                  ] else ...[
-                    const Icon(Icons.download_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    const Text('Download & Install', style: TextStyle(fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 8),
+                      const Text('Downloading...', style: TextStyle(fontWeight: FontWeight.w700)),
+                    ] else if (isCompleted) ...[
+                      const Icon(Icons.install_mobile_rounded, size: 18),
+                      const SizedBox(width: 8),
+                      const Text('Install Now', style: TextStyle(fontWeight: FontWeight.w700)),
+                    ] else if (isFailed) ...[
+                      const Icon(Icons.refresh_rounded, size: 18),
+                      const SizedBox(width: 8),
+                      const Text('Retry', style: TextStyle(fontWeight: FontWeight.w700)),
+                    ] else ...[
+                      const Icon(Icons.download_rounded, size: 18),
+                      const SizedBox(width: 8),
+                      const Text('Download & Install', style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

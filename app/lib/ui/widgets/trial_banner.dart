@@ -57,7 +57,7 @@ class TrialBanner extends ConsumerWidget {
               )
             ],
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
               Expanded(
@@ -70,8 +70,8 @@ class TrialBanner extends ConsumerWidget {
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
-                        fontSize: 15,
-                        letterSpacing: 0.3,
+                        fontSize: 14,
+                        letterSpacing: 0.2,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -79,21 +79,22 @@ class TrialBanner extends ConsumerWidget {
                       subText,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: gradientColors[0],
                   elevation: 2,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  minimumSize: const Size(0, 36),
                 ),
                 onPressed: () {
                   showDialog(
@@ -103,7 +104,7 @@ class TrialBanner extends ConsumerWidget {
                 },
                 child: const Text(
                   'Upgrade',
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 12),
                 ),
               ),
             ],

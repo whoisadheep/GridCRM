@@ -81,12 +81,18 @@ class SyncService {
   Stream<List<Call>> streamCalls() async* {
     final role = await _settings.getRole();
     final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      print('Calls stream notice: No authenticated Firebase user UID found.');
+      yield <Call>[];
+      return;
+    }
+
     Query query = _firestore.collection('calls').where('ownerId', isEqualTo: uid).orderBy('created_at', descending: true);
 
     if (role == 'technician') {
       final techName = await _settings.getAssignedTechnician();
-      if (techName != null && techName.isNotEmpty) {
-        query = query.where('technician_assigned', isEqualTo: techName);
+      if (techName != null && techName.trim().isNotEmpty) {
+        query = query.where('technician_assigned', isEqualTo: techName.trim());
       }
     }
 
@@ -96,7 +102,6 @@ class SyncService {
       }).toList();
     }).handleError((error) {
       print('Calls stream error: $error');
-      // Return empty list on error (e.g., permission denied) so UI doesn't crash
       return <Call>[]; 
     });
   }

@@ -52,7 +52,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
     if (mounted) {
       setState(() {
-        _isLoggedIn = loggedIn;
         _isLoading = false;
       });
     }

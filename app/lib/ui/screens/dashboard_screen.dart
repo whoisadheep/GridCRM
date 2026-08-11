@@ -5,6 +5,7 @@ import '../../core/sync_service.dart';
 import '../../models/call.dart';
 import 'technician_management_screen.dart';
 import '../widgets/trial_banner.dart';
+import '../widgets/download_progress_banner.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -231,6 +232,7 @@ class DashboardScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const TrialBanner(),
+            const DownloadProgressBanner(),
             const SizedBox(height: 16),
             // KPI Header
             Row(

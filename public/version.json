@@ -2,6 +2,6 @@
   "latest_version": "1.0.2",
   "min_required_version": "1.0.0",
   "update_url": "https://github.com/whoisadheep/GridCRM/releases/latest/download/app-release.apk",
-  "release_notes": "Added Firebase Auth data isolation. Bug fixes.",
+  "release_notes": "Minor bug fixes and performance improvements.",
   "force_update": false
 }

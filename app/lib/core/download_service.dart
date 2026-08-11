@@ -95,6 +95,11 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         url,
         filePath,
         cancelToken: _cancelToken,
+        options: Options(
+          followRedirects: true,
+          maxRedirects: 10,
+          validateStatus: (status) => status != null && status < 400,
+        ),
         onReceiveProgress: (received, total) {
           if (total != -1) {
             state = state.copyWith(
@@ -113,15 +118,22 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
       if (e.type == DioExceptionType.cancel) {
         state = const DownloadState(); // Reset to idle
       } else {
+        final statusCode = e.response?.statusCode;
+        String errorMsg = 'Network error. Please check internet.';
+        if (statusCode == 404) {
+          errorMsg = 'Update file not found on server (404).';
+        } else if (statusCode != null) {
+          errorMsg = 'Server error ($statusCode).';
+        }
         state = state.copyWith(
           status: DownloadStatus.failed,
-          error: 'Network error. Please try again.',
+          error: errorMsg,
         );
       }
     } catch (e) {
       state = state.copyWith(
         status: DownloadStatus.failed,
-        error: 'Download failed. Please try again.',
+        error: 'Download failed: ${e.toString()}',
       );
     }
   }
