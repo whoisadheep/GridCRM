@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'settings.dart';
 import '../ui/widgets/app_update_dialog.dart';
 
@@ -48,8 +49,11 @@ class AppUpdateInfo {
 
   static bool _isVersionHigher(String current, String latest) {
     try {
-      final cParts = current.split('.').map((e) => int.tryParse(e.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0).toList();
-      final lParts = latest.split('.').map((e) => int.tryParse(e.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0).toList();
+      final cleanCurrent = current.split('+')[0].trim();
+      final cleanLatest = latest.split('+')[0].trim();
+
+      final cParts = cleanCurrent.split('.').map((e) => int.tryParse(e.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0).toList();
+      final lParts = cleanLatest.split('.').map((e) => int.tryParse(e.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0).toList();
 
       for (int i = 0; i < lParts.length; i++) {
         final c = i < cParts.length ? cParts[i] : 0;
@@ -63,6 +67,16 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
+  Future<void> ignoreVersion(String version) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('ignored_update_version', version);
+  }
+
+  Future<String?> getIgnoredVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('ignored_update_version');
+  }
+
   Future<AppUpdateInfo?> checkUpdate() async {
     try {
       String currentVer = "1.0.4";
@@ -90,17 +104,25 @@ class AppUpdateService {
     return null;
   }
 
-  Future<void> checkAndShowUpdateModal(BuildContext context, {bool showToastIfLatest = false}) async {
+  Future<void> checkAndShowUpdateModal(BuildContext context, {bool showToastIfLatest = false, bool isManualCheck = false}) async {
     final info = await checkUpdate();
     if (!context.mounted) return;
 
     if (info != null && info.hasUpdate) {
+      if (!isManualCheck && !info.forceUpdate) {
+        final ignoredVer = await getIgnoredVersion();
+        if (ignoredVer == info.latestVersion) {
+          // User already skipped/dismissed this version. Suppress popup!
+          return;
+        }
+      }
+
       showDialog(
         context: context,
         barrierDismissible: !info.forceUpdate,
         builder: (ctx) => AppUpdateDialog(updateInfo: info),
       );
-    } else if (showToastIfLatest && info != null) {
+    } else if ((showToastIfLatest || isManualCheck) && info != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("🚀 You are on the latest version of GridCRM! (v${info.currentVersion})"),

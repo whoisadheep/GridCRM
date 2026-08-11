@@ -217,8 +217,11 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
             right: 8,
             child: IconButton(
               icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 22),
-              tooltip: 'Minimize',
-              onPressed: () => Navigator.pop(context),
+              tooltip: 'Close',
+              onPressed: () {
+                ref.read(appUpdateServiceProvider).ignoreVersion(widget.updateInfo.latestVersion);
+                Navigator.pop(context);
+              },
             ),
           ),
       ],
@@ -352,10 +355,10 @@ class _AppUpdateDialogState extends ConsumerState<AppUpdateDialog>
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               onPressed: () {
-                // Minimize dialog (do NOT cancel active download)
-                if (!widget.updateInfo.forceUpdate || isDownloading) {
-                  Navigator.pop(context);
+                if (!widget.updateInfo.forceUpdate && !isDownloading) {
+                  ref.read(appUpdateServiceProvider).ignoreVersion(widget.updateInfo.latestVersion);
                 }
+                Navigator.pop(context);
               },
               child: Text(
                 isDownloading ? 'Minimize' : 'Later',

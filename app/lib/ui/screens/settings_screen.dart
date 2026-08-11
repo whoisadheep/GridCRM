@@ -296,7 +296,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             icon: Icons.system_update,
             title: 'Check for Updates',
             onTap: () {
-              ref.read(appUpdateServiceProvider).checkAndShowUpdateModal(context, showToastIfLatest: true);
+              ref.read(appUpdateServiceProvider).checkAndShowUpdateModal(context, showToastIfLatest: true, isManualCheck: true);
             },
           ),
           const SizedBox(height: 32),
