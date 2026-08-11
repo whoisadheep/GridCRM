@@ -8,6 +8,7 @@ import 'login_screen.dart';
 import 'technician_profile_screen.dart';
 import '../widgets/assistant_sheet.dart';
 import '../widgets/upgrade_dialog.dart';
+import '../widgets/download_progress_banner.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -106,6 +107,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         padding: const EdgeInsets.all(24.0),
         children: [
           const Text('Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54)),
+          const SizedBox(height: 16),
+          const DownloadProgressBanner(),
           const SizedBox(height: 16),
           if (_role == 'technician' && _selectedTech != null)
             Padding(

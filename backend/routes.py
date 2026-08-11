@@ -8,6 +8,11 @@ api_bp = Blueprint('api', __name__)
 
 TRIAL_DAYS = 3
 
+def _token_to_str(token):
+    """Safely convert a custom token to a string.
+    Older firebase-admin versions return bytes, newer ones return str."""
+    return token.decode('utf-8') if isinstance(token, bytes) else str(token)
+
 def get_or_create_user_trial(doc_ref, doc_data):
     now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
     updates = {}
@@ -59,7 +64,7 @@ def login():
                 "username": username,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
-                "custom_token": firebase_admin.auth.create_custom_token(username).decode('utf-8'),
+                "custom_token": _token_to_str(firebase_admin.auth.create_custom_token(username)),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:
@@ -88,7 +93,7 @@ def login():
                 "technician_name": name,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
-                "custom_token": firebase_admin.auth.create_custom_token(name).decode('utf-8'),
+                "custom_token": _token_to_str(firebase_admin.auth.create_custom_token(name)),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:

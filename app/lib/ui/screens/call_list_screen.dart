@@ -11,6 +11,7 @@ import 'call_detail_screen.dart';
 import '../widgets/assistant_sheet.dart';
 import '../widgets/trial_banner.dart';
 import '../widgets/upgrade_dialog.dart';
+import '../widgets/download_progress_banner.dart';
 import '../../core/app_update_service.dart';
 
 class CallListScreen extends ConsumerStatefulWidget {
@@ -195,6 +196,7 @@ class _CallListScreenState extends ConsumerState<CallListScreen> {
           child: Column(
             children: [
               const TrialBanner(),
+              const DownloadProgressBanner(),
               // Search & Filter Bar
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

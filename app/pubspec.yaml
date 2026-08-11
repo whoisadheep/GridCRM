@@ -22,6 +22,10 @@ dependencies:
   firebase_messaging: ^16.4.3
   url_launcher: ^6.3.2
   cloud_firestore: ^6.7.1
+  dio: ^5.11.0
+  path_provider: ^2.1.6
+  open_filex: ^4.7.0
+  permission_handler: ^13.0.1
 
 dev_dependencies:
   flutter_test:
