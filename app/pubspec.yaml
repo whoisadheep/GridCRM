@@ -1,7 +1,7 @@
 name: crm_app
 description: "A new Flutter project for CRM."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.2+3
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -26,6 +26,7 @@ dependencies:
   path_provider: ^2.1.6
   open_filex: ^4.7.0
   permission_handler: ^13.0.1
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'settings.dart';
 import '../ui/widgets/app_update_dialog.dart';
 
@@ -62,10 +63,18 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
-  static const String currentInstalledVersion = "1.0.2";
-
   Future<AppUpdateInfo?> checkUpdate() async {
     try {
+      String currentVer = "1.0.2";
+      try {
+        final packageInfo = await PackageInfo.fromPlatform();
+        if (packageInfo.version.isNotEmpty) {
+          currentVer = packageInfo.version;
+        }
+      } catch (e) {
+        debugPrint("Error fetching PackageInfo: $e");
+      }
+
       // Fetching from Firebase Hosting instead of the python backend
       final response = await http.get(
         Uri.parse('https://grid-a4798.web.app/version.json'),
@@ -73,7 +82,7 @@ class AppUpdateService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
-        return AppUpdateInfo.fromJson(data, currentInstalledVersion);
+        return AppUpdateInfo.fromJson(data, currentVer);
       }
     } catch (e) {
       debugPrint("Error checking app update: $e");
@@ -91,10 +100,10 @@ class AppUpdateService {
         barrierDismissible: !info.forceUpdate,
         builder: (ctx) => AppUpdateDialog(updateInfo: info),
       );
-    } else if (showToastIfLatest) {
+    } else if (showToastIfLatest && info != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("🚀 You are on the latest version of GridCRM! (v1.0.0)"),
+        SnackBar(
+          content: Text("🚀 You are on the latest version of GridCRM! (v${info.currentVersion})"),
           backgroundColor: Colors.green,
         ),
       );
