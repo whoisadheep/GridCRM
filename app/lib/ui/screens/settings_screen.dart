@@ -59,6 +59,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _logout() async {
     final settings = ref.read(settingsProvider);
     await settings.logout();
+    ref.invalidate(callsStreamProvider);
+    ref.invalidate(callsProvider);
+    ref.invalidate(techniciansProvider);
     if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,

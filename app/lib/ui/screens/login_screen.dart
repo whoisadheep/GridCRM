@@ -73,6 +73,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           await settings.setAssignedTechnician(data['technician_name']);
         }
         
+        ref.invalidate(callsStreamProvider);
+        ref.invalidate(callsProvider);
+        ref.invalidate(techniciansProvider);
+        
         if (mounted) {
           Navigator.pushReplacement(
             context,

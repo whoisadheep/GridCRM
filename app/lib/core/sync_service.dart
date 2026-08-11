@@ -12,22 +12,24 @@ import '../models/call_update.dart';
 
 final syncServiceProvider = Provider((ref) => SyncService(ref));
 
-// We now stream the calls directly from Firestore.
-final callsStreamProvider = StreamProvider<List<Call>>((ref) {
+final authStateProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
+
+// Stream calls directly from Firestore for the currently authenticated user.
+final callsStreamProvider = StreamProvider.autoDispose<List<Call>>((ref) {
+  ref.watch(authStateProvider);
   final syncService = ref.watch(syncServiceProvider);
   return syncService.streamCalls();
 });
 
-// For backward compatibility with widgets that expected callsProvider as StateNotifier
-// We can just watch the stream provider instead, but let's provide a proxy if needed.
-// Actually, it's cleaner to update the UI to use `ref.watch(callsStreamProvider)`.
-// But for now, we can create a simpler callsProvider.
-final callsProvider = Provider<List<Call>>((ref) {
+final callsProvider = Provider.autoDispose<List<Call>>((ref) {
   final asyncValue = ref.watch(callsStreamProvider);
   return asyncValue.value ?? [];
 });
 
-final techniciansProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
+final techniciansProvider = StreamProvider.autoDispose<List<Map<String, dynamic>>>((ref) {
+  ref.watch(authStateProvider);
   final syncService = ref.watch(syncServiceProvider);
   return syncService.streamTechnicians();
 });
