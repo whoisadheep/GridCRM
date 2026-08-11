@@ -93,7 +93,7 @@ def login():
                 "technician_name": name,
                 "created_at": created_at,
                 "is_subscribed": is_subscribed,
-                "custom_token": _token_to_str(fb_auth.create_custom_token(name)),
+                "custom_token": _token_to_str(fb_auth.create_custom_token(tech_data.get('ownerId'))),
                 "trial_days": TRIAL_DAYS
             }), 200
         else:
